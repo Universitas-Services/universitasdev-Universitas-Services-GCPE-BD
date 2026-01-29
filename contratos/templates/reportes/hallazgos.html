@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Hallazgos</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 2cm;
+            @bottom-right {
+                content: "Página " counter(page) " de " counter(pages);
+                font-size: 8pt;
+            }
+        }
+
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 9pt;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        /* TÍTULOS */
+        .main-title {
+            font-weight: bold;
+            font-size: 11pt;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .sub-title {
+            font-size: 10pt;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        /* FICHA DE DATOS (ENCABEZADO) */
+        .header-section {
+            margin-bottom: 20px;
+            font-size: 9pt;
+        }
+        .header-row {
+            margin-bottom: 4px;
+        }
+        .label {
+            font-weight: bold;
+        }
+
+        /* TABLA DE HALLAZGOS */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 5px;
+            vertical-align: top;
+            text-align: left;
+            font-size: 8pt;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        /* COLORES DE ESTADO */
+        .status-si {
+            color: #008000; /* Verde oscuro */
+            font-weight: bold;
+            text-align: center;
+        }
+        .status-no {
+            color: #cc0000; /* Rojo oscuro */
+            font-weight: bold;
+            text-align: center;
+        }
+        .status-na {
+            color: #666666; /* Gris */
+            font-weight: bold;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        /* FOOTER / FIRMAS */
+        .footer-section {
+            margin-top: 40px;
+            page-break-inside: avoid;
+        }
+        .firma-block {
+            margin-top: 40px;
+            border-top: 1px solid #000;
+            width: 200px;
+            padding-top: 5px;
+        }
+        
+        /* LEYENDA */
+        .leyenda {
+            margin-top: 30px;
+            font-size: 7pt;
+            color: #444;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-title">REPORTE DE VERIFICACIÓN DE CUMPLIMIENTO NORMATIVO</div>
+    <div class="sub-title">EXPEDIENTE CONCURSO ABIERTO ACTO ÚNICO APERTURA ÚNICA</div>
+
+    <div class="header-section">
+        <div class="header-row">
+            <span class="label">ENTE U ORGANISMO:</span> {{ reporte.nombre_organo_entidad }}
+        </div>
+        <div class="header-row">
+            <span class="label">UNIDAD QUE VERIFICA EL CUMPLIMIENTO:</span> {{ reporte.nombre_unidad_revisora }}
+        </div>
+        <div class="header-row">
+            <span class="label">CÓDIGO:</span> {{ reporte.nomenclatura }}
+        </div>
+        <div class="header-row">
+            <span class="label">MODALIDAD:</span> ACTO ÚNICO APERTURA ÚNICA
+        </div>
+        <div class="header-row">
+            <span class="label">ELABORADO POR:</span> {{ reporte.persona_contacto }}
+        </div>
+        <div class="header-row">
+            <span class="label">FECHA:</span> {{ reporte.fecha_revision }}
+        </div>
+    </div>
+
+    <div style="font-weight: bold; margin-top: 10px;">REPORTE DE HALLAZGOS</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="5%">N°</th>
+                <th width="35%">BÚSQUEDA</th>
+                <th width="10%">CUMPLE</th>
+                <th width="25%">CONDICIÓN</th>
+                <th width="25%">CRITERIO</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in detalles %}
+            <tr>
+                <td style="text-align: center;">{{ item.numero }}</td>
+                <td>{{ item.pregunta }}</td>
+                
+                <td class="{% if item.cumple == 'SI' %}status-si{% elif item.cumple == 'NO' %}status-no{% else %}status-na{% endif %}">
+                    {% if item.cumple == 'NA' %}
+                        N/A
+                    {% else %}
+                        {{ item.cumple }}
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if item.cumple == 'NA' %}
+                        -
+                    {% else %}
+                        {{ item.condicion|default:"-" }}
+                    {% endif %}
+                </td>
+
+                <td>
+                    {{ item.criterio|default:"-" }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer-section">
+        <div class="firma-block">
+            <strong>REVISADO POR:</strong><br>
+            {{ reporte.nombre_completo_revisor }}
+        </div>
+    </div>
+
+    <div class="leyenda">
+        <strong>Leyenda:</strong><br>
+        <strong>ELABORADO POR:</strong> Nombre de la persona que prepara la información.<br>
+        <strong>REVISADO POR:</strong> Nombre de la persona responsable de verificar la información.<br>
+        <strong>BÚSQUEDA:</strong> Elemento de análisis dentro del documento revisado.<br>
+        <strong>CUMPLE:</strong> Estatus de existencia o no del elemento de análisis.<br>
+        <strong>CONDICIÓN:</strong> Descripción del hecho o situación observada.<br>
+        <strong>CRITERIO:</strong> Indica la norma legal o sublegal administrativa o técnica con la cual es comparable el hecho (es el deber ser).
+    </div>
+
+</body>
+</html>

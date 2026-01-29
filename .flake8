@@ -1,0 +1,7 @@
+[flake8]
+# Ajustamos la longitud máxima a 88 para coincidir con Black
+max-line-length = 92
+# Ignoramos errores que entran en conflicto con Black
+extend-ignore = E203
+# Excluimos carpetas que no nos importan
+exclude = .git,__pycache__,docs/source/conf.py,old,build,dist,migrations

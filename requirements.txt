@@ -1,0 +1,24 @@
+Django>=5.0
+django-ninja
+psycopg2-binary
+django-q2
+weasyprint
+
+# --- INFRAESTRUCTURA Y PROD ---
+django-environ          # Manejo de variables de entorno (.env)
+django-cors-headers     # Conexión con Frontend (React/Vue/etc)
+whitenoise              # Servidor de archivos estáticos eficiente
+gunicorn                # Servidor WSGI para producción
+uvicorn                 # Servidor ASGI (recomendado para Ninja)
+
+# --- TESTING (PRUEBAS) ---
+pytest-django     # Motor de pruebas
+factory-boy       # Fábrica de datos falsos
+faker             # Generador de nombres/fechas
+pre-commit
+
+# --- CALIDAD DE CÓDIGO ---
+black             # Formateador automático
+flake8            # Detector de errores
+pytest-playwright
+django-debug-toolbar
