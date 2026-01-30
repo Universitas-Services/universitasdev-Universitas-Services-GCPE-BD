@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entorno Virtual
+venv/
+env/
+
+# Variables de Entorno (SECRETOS)
+.env
+
+# Base de datos
+db.sqlite3
+
+# Docker
+.docker_data/
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
+.pytest_cache/
