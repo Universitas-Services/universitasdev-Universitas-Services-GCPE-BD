@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     "corsheaders",  # <--- Para permitir conexión con Frontend (React, etc)
     "django_q",  # <--- El motor de tareas
     "contratos",  # <--- Tu nueva app
+    'ninja',
+    'ninja_extra',  # <--- NUEVO
+    'ninja_jwt',
 ]
 
 MIDDLEWARE = [

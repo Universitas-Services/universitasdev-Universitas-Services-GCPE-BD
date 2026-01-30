@@ -22,3 +22,6 @@ black             # Formateador automático
 flake8            # Detector de errores
 pytest-playwright
 django-debug-toolbar
+
+# --- librería de seguridad
+django-ninja-jwt

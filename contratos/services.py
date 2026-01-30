@@ -210,7 +210,7 @@ def generar_data_para_pdf(reporte: ComplianceExpediente):
             # Si CUMPLE: Sumamos puntos y no ponemos regaños
             total_puntos += info_catalogo["puntos"]
             maximos_posibles += info_catalogo["puntos"]
-            item["condicion"] = "Sin hallazgos negativos."
+            item["condicion"] = ""
             item["criterio"] = ""
             
         elif respuesta_usuario == "NO":

@@ -1,21 +1,20 @@
 from ninja import ModelSchema
-from .models import Proveedor, ComplianceExpediente, ManualConfiguracion
+from .models import Proveedor, ComplianceExpediente
 
-# --- SCHEMA DE PROVEEDORES ---
+# Esquema para PROVEEDORES
 class ProveedorSchema(ModelSchema):
-    class Meta:
+    class Meta:  # <--- ANTES ERA 'Config', AHORA ES 'Meta'
         model = Proveedor
-        # Excluimos campos automáticos que no envía el usuario
-        exclude = ['id', 'fecha_registro', 'creado_por']
+        exclude = ['creado_por', 'fecha_registro']
 
-# --- SCHEMA DE CONFIGURACIÓN (MANUAL) ---
-class ManualConfiguracionSchema(ModelSchema):
-    class Meta:
-        model = ManualConfiguracion
-        exclude = ['id', 'usuario']
-
-# --- SCHEMA DE COMPLIANCE (AUDITORÍA) ---
+# Esquema para CREAR el reporte (Input)
 class ComplianceSchema(ModelSchema):
-    class Meta:
+    class Meta:  # <--- ANTES ERA 'Config', AHORA ES 'Meta'
         model = ComplianceExpediente
         exclude = ['id', 'fecha_creacion', 'usuario_revisor']
+
+# Esquema para MOSTRAR el reporte (Output)
+class ComplianceOut(ModelSchema):
+    class Meta:  # <--- ANTES ERA 'Config', AHORA ES 'Meta'
+        model = ComplianceExpediente
+        fields = "__all__"

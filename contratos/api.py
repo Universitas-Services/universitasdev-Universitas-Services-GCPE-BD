@@ -1,69 +1,74 @@
+from ninja_extra import NinjaExtraAPI
+from ninja_jwt.controller import NinjaJWTDefaultController
+from ninja_jwt.authentication import JWTAuth
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from weasyprint import HTML  # <--- La librería mágica para PDFs
-from .services import generar_data_para_pdf # <--- Tu nuevo servicio
-from typing import List
+from weasyprint import HTML
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
-from ninja import Router
-from .models import Proveedor, ComplianceExpediente
-from .schemas import ProveedorSchema, ComplianceSchema
+from typing import List
 
-router = Router()
+# Importaciones locales
+from .models import Proveedor, ComplianceExpediente
+from .schemas import ProveedorSchema, ComplianceSchema, ComplianceOut
+from .services import generar_data_para_pdf
+
+# Inicializamos la API
+api = NinjaExtraAPI(title="Sistema de Contrataciones")
+
+# --- MÓDULO DE AUTENTICACIÓN (LOGIN) ---
+# Esto crea las rutas /api/auth/token (para login) y /api/auth/refresh
+api.register_controllers(NinjaJWTDefaultController)
 
 # --- ENDPOINTS DE PROVEEDORES ---
 
-@router.post("/proveedores", response=ProveedorSchema)
+@api.post("/proveedores", auth=JWTAuth())
 def crear_proveedor(request, payload: ProveedorSchema):
-    # TRUCO TEMPORAL: Usamos el primer usuario admin que exista
-    usuario = User.objects.first()
+    # SEGURIDAD REAL: Obtenemos el usuario del Token
+    usuario_actual = request.auth
     
-    # Creamos el proveedor usando los datos del payload
     proveedor = Proveedor.objects.create(
-        creado_por=usuario,
+        creado_por=usuario_actual,  # <--- Usamos el usuario real
         **payload.dict()
     )
-    return proveedor
+    return {"id": proveedor.id, "mensaje": "Proveedor creado exitosamente"}
 
-@router.get("/proveedores", response=List[ProveedorSchema])
+@api.get("/proveedores", response=List[ProveedorSchema], auth=JWTAuth())
 def listar_proveedores(request):
     return Proveedor.objects.all()
 
 # --- ENDPOINTS DE COMPLIANCE (AUDITORÍA) ---
 
-@router.post("/compliance", response=ComplianceSchema)
+@api.post("/compliance", response=ComplianceSchema, auth=JWTAuth())
 def crear_reporte_compliance(request, payload: ComplianceSchema):
-    usuario = User.objects.first()
+    # SEGURIDAD REAL: El auditor es quien está logueado
+    usuario_auditor = request.auth
     
     reporte = ComplianceExpediente.objects.create(
-        usuario_revisor=usuario,
+        usuario_revisor=usuario_auditor, # <--- Usamos el usuario real
         **payload.dict()
     )
     return reporte
 
-@router.get("/compliance", response=List[ComplianceSchema])
+@api.get("/compliance", response=List[ComplianceOut], auth=JWTAuth())
 def listar_reportes_compliance(request):
     return ComplianceExpediente.objects.all()
 
-@router.get("/compliance/{id}/pdf")
+@api.get("/compliance/{id}/pdf", auth=JWTAuth())
 def descargar_pdf_compliance(request, id: int):
-    # a) Buscamos el reporte por ID (si no existe, da error 404 automático)
+    # 1. Buscamos el reporte
     reporte = get_object_or_404(ComplianceExpediente, id=id)
 
-    # b) Llamamos a tu servicio para procesar la lógica (Puntos, Textos Legales, etc.)
+    # 2. Generamos la data inteligente (Puntos y textos legales)
     data_context = generar_data_para_pdf(reporte)
 
-    # c) Inyectamos los datos en el HTML
-    # Django buscará en contratos/templates/reportes/hallazgos.html
+    # 3. Renderizamos el HTML
     html_string = render_to_string('reportes/hallazgos.html', data_context)
 
-    # d) Generamos el PDF usando WeasyPrint
+    # 4. Convertimos a PDF
     pdf_file = HTML(string=html_string).write_pdf()
 
-    # e) Preparamos la respuesta para que el navegador descargue el archivo
+    # 5. Respuesta de descarga
     response = HttpResponse(pdf_file, content_type='application/pdf')
-    
-    # Esto le dice al navegador: "Descárgalo con este nombre"
     nombre_archivo = f"Reporte_Hallazgos_{reporte.nomenclatura}.pdf"
     response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
     

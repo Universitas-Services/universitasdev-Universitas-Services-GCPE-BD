@@ -50,7 +50,9 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin-top: 0px;
+            margin-bottom: 0;
+            border-top: none;
         }
 
         th, td {
@@ -69,21 +71,15 @@
         }
 
         /* COLORES DE ESTADO */
-        .status-si {
-            color: #008000; /* Verde oscuro */
+        .status-si, .status-no, .status-na {
+            color: #000;       /* Todo en Negro puro */
             font-weight: bold;
             text-align: center;
         }
-        .status-no {
-            color: #cc0000; /* Rojo oscuro */
-            font-weight: bold;
-            text-align: center;
-        }
+        
+        /* Opcional: Si quieres que el N/A no se vea itálica, borra esto también */
         .status-na {
-            color: #666666; /* Gris */
-            font-weight: bold;
-            text-align: center;
-            font-style: italic;
+            font-style: normal; 
         }
         
         /* FOOTER / FIRMAS */
@@ -106,38 +102,52 @@
             border-top: 1px solid #ccc;
             padding-top: 10px;
         }
+
+        /* EVITAR QUE LAS FILAS SE CORTEN */
+        tr {
+            page-break-inside: avoid; /* Obliga a la fila a pasar completa a la siguiente hoja si no cabe */
+        }
     </style>
 </head>
 <body>
 
-    <div class="main-title">REPORTE DE VERIFICACIÓN DE CUMPLIMIENTO NORMATIVO</div>
-    <div class="sub-title">EXPEDIENTE CONCURSO ABIERTO ACTO ÚNICO APERTURA ÚNICA</div>
-
-    <div class="header-section">
-        <div class="header-row">
-            <span class="label">ENTE U ORGANISMO:</span> {{ reporte.nombre_organo_entidad }}
-        </div>
-        <div class="header-row">
-            <span class="label">UNIDAD QUE VERIFICA EL CUMPLIMIENTO:</span> {{ reporte.nombre_unidad_revisora }}
-        </div>
-        <div class="header-row">
-            <span class="label">CÓDIGO:</span> {{ reporte.nomenclatura }}
-        </div>
-        <div class="header-row">
-            <span class="label">MODALIDAD:</span> ACTO ÚNICO APERTURA ÚNICA
-        </div>
-        <div class="header-row">
-            <span class="label">ELABORADO POR:</span> {{ reporte.persona_contacto }}
-        </div>
-        <div class="header-row">
-            <span class="label">FECHA:</span> {{ reporte.fecha_revision }}
-        </div>
+    <div style="text-align: center; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; line-height: 1.2;">
+        <div style="font-size: 11pt;">REPORTE</div>
+        <div style="font-size: 11pt;">DE VERIFICACIÓN DE CUMPLIMIENTO NORMATIVO</div>
+        <div style="font-size: 10pt;">EXPEDIENTE</div>
+        <div style="font-size: 10pt;">CONCURSO ABIERTO ACTO ÚNICO APERTURA ÚNICA</div>
     </div>
 
-    <div style="font-weight: bold; margin-top: 10px;">REPORTE DE HALLAZGOS</div>
+    <table style="width: 100%; border-collapse: collapse; font-size: 9pt;">
+        <tbody>
+            <tr>
+                <td style="width: 65%; border: 1px solid #000; padding: 6px; vertical-align: top;">
+                    <div style="margin-bottom: 4px;"><strong>ENTE U ORGANISMO:</strong> {{ reporte.nombre_organo_entidad }}</div>
+                    <div style="margin-bottom: 4px;"><strong>UNIDAD QUE VERIFICA EL CUMPLIMIENTO:</strong> {{ reporte.nombre_unidad_revisora }}</div>
+                    <div style="margin-bottom: 4px;"><strong>CÓDIGO:</strong> {{ reporte.nomenclatura }}</div>
+                    <div><strong>MODALIDAD:</strong> ACTO ÚNICO APERTURA ÚNICA</div>
+                </td>
+                
+                <td style="width: 35%; border: 1px solid #000; padding: 6px; vertical-align: top;">
+                    <div style="margin-bottom: 4px;"><strong>ELABORADO POR:</strong> {{ reporte.persona_contacto }}</div>
+                    <div><strong>FECHA:</strong> {{ reporte.fecha_revision }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #000; padding: 8px; text-align: center; font-weight: bold; vertical-align: middle; background-color: #fff;">
+                    REPORTE DE HALLAZGOS
+                </td>
+                
+                <td style="border: 1px solid #000; padding: 6px; vertical-align: top;">
+                    <div style="margin-bottom: 15px;"><strong>REVISADO POR:</strong> {{ reporte.nombre_completo_revisor }}</div>
+                    <div><strong>FECHA:</strong></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
     <table>
-        <thead>
+        <tbody>
             <tr>
                 <th width="5%">N°</th>
                 <th width="35%">BÚSQUEDA</th>
@@ -145,7 +155,7 @@
                 <th width="25%">CONDICIÓN</th>
                 <th width="25%">CRITERIO</th>
             </tr>
-        </thead>
+        </tbody>
         <tbody>
             {% for item in detalles %}
             <tr>
