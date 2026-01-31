@@ -70,16 +70,28 @@
             text-transform: uppercase;
         }
 
-        /* COLORES DE ESTADO */
+        /* COLORES DE ESTADO - RESTAURADOS */
+        
+        /* Estilos comunes (negrita y centrado) */
         .status-si, .status-no, .status-na {
-            color: #000;       /* Todo en Negro puro */
             font-weight: bold;
             text-align: center;
         }
-        
-        /* Opcional: Si quieres que el N/A no se vea itálica, borra esto también */
+
+        /* Verde para SI */
+        .status-si {
+            color: #2E7D32; 
+        }
+
+        /* Rojo para NO */
+        .status-no {
+            color: #D32F2F; 
+        }
+
+        /* Gris para N/A */
         .status-na {
-            font-style: normal; 
+            color: #9E9E9E; 
+            font-style: normal;
         }
         
         /* FOOTER / FIRMAS */
@@ -129,7 +141,7 @@
                 </td>
                 
                 <td style="width: 35%; border: 1px solid #000; padding: 6px; vertical-align: top;">
-                    <div style="margin-bottom: 4px;"><strong>ELABORADO POR:</strong> {{ reporte.persona_contacto }}</div>
+                    <div style="margin-bottom: 25px;"><strong>ELABORADO POR:</strong> {{ reporte.persona_contacto }}</div>
                     <div><strong>FECHA:</strong> {{ reporte.fecha_revision }}</div>
                 </td>
             </tr>
@@ -139,7 +151,7 @@
                 </td>
                 
                 <td style="border: 1px solid #000; padding: 6px; vertical-align: top;">
-                    <div style="margin-bottom: 15px;"><strong>REVISADO POR:</strong> {{ reporte.nombre_completo_revisor }}</div>
+                    <div style="margin-bottom: 15px;"><strong>REVISADO POR:</strong> </div>
                     <div><strong>FECHA:</strong></div>
                 </td>
             </tr>
@@ -185,13 +197,6 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <div class="footer-section">
-        <div class="firma-block">
-            <strong>REVISADO POR:</strong><br>
-            {{ reporte.nombre_completo_revisor }}
-        </div>
-    </div>
 
     <div class="leyenda">
         <strong>Leyenda:</strong><br>
