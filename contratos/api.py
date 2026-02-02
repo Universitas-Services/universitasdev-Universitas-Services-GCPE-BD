@@ -7,9 +7,10 @@ from weasyprint import HTML
 from django.shortcuts import get_object_or_404
 from typing import List
 
+
 # Importaciones locales
 from .models import Proveedor, ComplianceExpediente
-from .schemas import ProveedorSchema, ComplianceSchema, ComplianceOut
+from .schemas import ProveedorSchema, ComplianceSchema, ComplianceOut, ManualSchema
 from .services import generar_data_para_pdf
 
 # Inicializamos la API
@@ -74,6 +75,38 @@ def descargar_pdf_compliance(request, id: int):
     # 5. Respuesta de descarga
     response = HttpResponse(pdf_file, content_type="application/pdf")
     nombre_archivo = f"Reporte_Hallazgos_{reporte.nomenclatura}.pdf"
+    response[
+        "Content-Disposition"
+    ] = f'attachment; filename="{nombre_archivo}"'  # noqa: E702
+
+    return response
+
+
+# --- ENDPOINT DE MANUAL DE NORMAS ---
+
+
+@api.post("/manual/pdf", auth=JWTAuth())
+def generar_manual_pdf(request, payload: ManualSchema):
+    """
+    Recibe los 4 datos de configuración y genera el Manual en PDF.
+    No guarda en BD (por ahora), solo genera el documento al vuelo.
+    """
+    # 1. Preparamos el contexto (Diccionario de variables)
+    #    WeasyPrint usará esto para reemplazar {{ nombre_institucion_ente }} en el HTML
+    data_context = payload.dict()
+
+    # 2. Renderizamos el HTML
+    #    Nota: Crearemos este archivo 'manual_concurso_abierto.html' en el siguiente paso
+    html_string = render_to_string(
+        "reportes/manual_concurso_abierto.html", data_context
+    )
+
+    # 3. Convertimos a PDF
+    pdf_file = HTML(string=html_string).write_pdf()
+
+    # 4. Respuesta de descarga
+    response = HttpResponse(pdf_file, content_type="application/pdf")
+    nombre_archivo = f"Manual_Normas_{payload.siglas_institucion_ente}.pdf"
     response[
         "Content-Disposition"
     ] = f'attachment; filename="{nombre_archivo}"'  # noqa: E702

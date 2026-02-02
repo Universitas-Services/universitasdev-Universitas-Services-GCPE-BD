@@ -136,3 +136,10 @@ Q_CLUSTER = {
     "label": "Django Q",
     "orm": "default",
 }
+
+
+# CONFIGURACIÓN CORS
+CORS_ALLOW_ALL_ORIGINS = (
+    True  # Solo para desarrollo. En producción pondremos los dominios reales.
+)
+CORS_ALLOW_CREDENTIALS = True

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Manual de Normas y Procedimientos</title>
+    <style>
+        /* ================= CONFIGURACIÓN DE PÁGINA ================= */
+        @page {
+            size: letter;
+            /* Margen superior amplio para el encabezado complejo */
+            margin-top: 4.5cm;
+            margin-bottom: 3cm;
+            margin-left: 2cm;
+            margin-right: 2cm;
+
+            @top-center {
+                content: element(header);
+            }
+
+            @bottom-center {
+                content: element(footer);
+            }
+        }
+
+        /* ================= ESTILOS GENERALES ================= */
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 10pt;
+            line-height: 1.3;
+            text-align: justify;
+            color: #000;
+        }
+
+        /* ================= ENCABEZADO (HEADER) ================= */
+        .header-container {
+            position: running(header);
+            width: 100%;
+            font-size: 8pt;
+            margin-bottom: 20px;
+            font-family: 'Arial', sans-serif;
+        }
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        .header-table td {
+            border: 1px solid #000;
+            padding: 2px;
+            vertical-align: middle;
+        }
+        .meta-label { font-weight: bold; display: block; font-size: 7pt; margin-bottom: 2px; }
+
+        /* ================= PIE DE PÁGINA (FOOTER) ================= */
+        .footer-container {
+            position: running(footer);
+            width: 100%;
+            font-size: 7pt;
+            margin-top: 10px;
+        }
+        .footer-info { margin-bottom: 5px; font-weight: bold; }
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        .footer-table td {
+            border: 1px solid #000;
+            padding: 2px;
+            width: 25%;
+        }
+        .firma-box { height: 40px; vertical-align: bottom; }
+        .footer-header { background-color: #f0f0f0; font-weight: bold; }
+
+        /* ================= PORTADA ================= */
+        .portada { text-align: center; margin-top: 6cm; page-break-after: always; }
+        .portada h1 { font-size: 20pt; font-weight: bold; margin-bottom: 20px; }
+        .portada h2 { font-size: 16pt; font-weight: bold; margin-bottom: 4cm; }
+        .portada-fecha { font-size: 12pt; font-weight: bold; margin-top: 5cm; }
+
+        /* ================= TÍTULOS Y TEXTO ================= */
+        h3 {
+            font-size: 12pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        h4 {
+            font-size: 10pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 15px;
+            text-align: left;
+            background-color: #f2f2f2;
+            padding: 3px;
+            border: 1px solid #000;
+        }
+        p { margin-bottom: 10px; }
+
+        /* Listas limpias para texto legal */
+        ul, ol { margin-bottom: 10px; margin-left: 20px; padding-left: 0; }
+        li { margin-bottom: 8px; }
+
+        .bold { font-weight: bold; }
+        .uppercase { text-transform: uppercase; }
+
+        /* ================= TABLAS DE PROCEDIMIENTOS ================= */
+        .proc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 9pt;
+            page-break-inside: auto;
+        }
+        .proc-table th {
+            border: 1px solid #000;
+            background-color: #d9d9d9;
+            padding: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .proc-table td {
+            border: 1px solid #000;
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        /* Utilidades */
+        .page-break { page-break-before: always; }
+        .center { text-align: center; }
+        .justify { text-align: justify; }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <table class="header-table">
+            <tr>
+                <td rowspan="4" style="width: 15%;">
+                    <div class="meta-label">Tipo de Documento</div>
+                    <div style="margin-top: 10px; font-weight:bold;">MANUAL</div>
+                </td>
+                <td rowspan="4" style="width: 55%; font-weight: bold; font-size: 11pt;">
+                    MANUAL DE NORMAS Y PROCEDIMIENTOS<br>
+                    CONTRATACIONES PÚBLICAS<br>
+                    (Concurso Abierto)
+                </td>
+                <td style="width: 30%; text-align: left;">
+                    <span class="meta-label">Código:</span> CA-001
+                </td>
+            </tr>
+            <tr><td style="text-align: left;"><span class="meta-label">Vigencia:</span> {% now "Y" %}</td></tr>
+            <tr><td style="text-align: left;"><span class="meta-label">Actualización N°:</span> 01</td></tr>
+            <tr><td style="text-align: center; font-weight: bold;">PÁG. <span class="page"></span></td></tr>
+        </table>
+    </div>
+
+    <div class="footer-container">
+        <div class="footer-info">Fecha de elaboración: {% now "d/m/Y" %}</div>
+        <table class="footer-table">
+            <tr class="footer-header">
+                <td>Elaborado y conformado por:</td>
+                <td>Conformado:</td>
+                <td>Conformado:</td>
+                <td>Conformado:</td>
+            </tr>
+            <tr>
+                <td class="firma-box">Firma:</td>
+                <td class="firma-box">Firma:</td>
+                <td class="firma-box">Firma:</td>
+                <td class="firma-box">Firma:</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="portada">
+        <h1>MANUAL DE NORMAS Y PROCEDIMIENTOS<br>CONTRATACIONES PÚBLICAS</h1>
+        <h2>CONCURSO ABIERTO (SUMINISTRO DE BIENES)</h2>
+        <br><br>
+        <p style="font-size: 14pt;"><strong>ENTE:</strong> {{ nombre_institucion_ente }}</p>
+        <div class="portada-fecha">FECHA: {% now "F Y" %}</div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h3>ÍNDICE</h3>
+    <table style="width: 100%; border-collapse: collapse; font-size: 10pt;">
+        <tr><td style="border-bottom: 1px dotted #000;">EXPOSICIÓN DE MOTIVOS</td><td style="text-align: right;">2</td></tr>
+        <tr><td style="border-bottom: 1px dotted #000;">CAPÍTULO I: DISPOSICIONES GENERALES</td><td style="text-align: right;">3</td></tr>
+        <tr><td style="padding-left: 20px; border-bottom: 1px dotted #000;">- Objetivos y Alcance</td><td style="text-align: right;">3</td></tr>
+        <tr><td style="padding-left: 20px; border-bottom: 1px dotted #000;">- Base Legal</td><td style="text-align: right;">3</td></tr>
+        <tr><td style="padding-left: 20px; border-bottom: 1px dotted #000;">- Glosario de Términos</td><td style="text-align: right;">6</td></tr>
+        <tr><td style="padding-left: 20px; border-bottom: 1px dotted #000;">- Unidades Intervinientes y Documentos</td><td style="text-align: right;">12</td></tr>
+        <tr><td style="border-bottom: 1px dotted #000;">CAPÍTULO II: INSTRUCCIONES</td><td style="text-align: right;">14</td></tr>
+        <tr><td style="border-bottom: 1px dotted #000;">CAPÍTULO III: PROCEDIMIENTOS Y DESCRIPCIÓN</td><td style="text-align: right;">24</td></tr>
+        <tr><td style="padding-left: 20px; border-bottom: 1px dotted #000;">- Solicitud de Apertura</td><td style="text-align: right;">24</td></tr>
+        <tr><td style="padding-left: 20px; border-bottom: 1px dotted #000;">- Actividades de la Comisión</td><td style="text-align: right;">27</td></tr>
+        <tr><td style="padding-left: 20px; border-bottom: 1px dotted #000;">- Procedimiento Concurso Abierto</td><td style="text-align: right;">36</td></tr>
+    </table>
+
+    <div class="page-break"></div>
+
+    <h3>EXPOSICIÓN DE MOTIVOS</h3>
+    <p>
+        El presente Manual de Normas y Procedimientos para las Contrataciones Públicas de
+        <strong>{{ nombre_institucion_ente }}</strong> tiene como propósito establecer definiciones y
+        procedimientos básicos para orientar a <strong>{{ siglas_institucion_ente }}</strong> en todo lo
+        relacionado con los procesos de Contrataciones para el Suministro Bienes de conformidad con lo
+        establecido en Ley Constitucional contra la guerra económica para la racionalidad y uniformidad
+        en la adquisición de bienes, servicios y obras públicas (LCCGE), el Decreto con Rango, Valor y
+        Fuerza de Ley de Contrataciones Públicas (LCP) y su reglamento (RLCP).
+    </p>
+    <p>
+        El documento esquematiza de manera ilustrada la normativa legal vigente que regula la materia en la
+        República Bolivariana de Venezuela, así como los procedimientos a seguir conforme a la Ley; esto
+        con el fin de facilitar al funcionario con responsabilidades en esta materia información de interés en
+        forma gráfica y sistematizada, con un lenguaje claro, sencillo y de fácil interpretación. Esto lo hace
+        una poderosa herramienta para el efectivo análisis de las disposiciones vigentes y para la aplicación
+        de los criterios y metodología para la selección de proveedores con conocimiento del marco legal aplicable
+        a tales efectos. Evitando, de esta manera, la generación de responsabilidades administrativas como
+        consecuencia negativa de una errónea o inadecuada interpretación de la reglamentación vigente.
+    </p>
+    <p>
+        Es importante acotar, que las acciones contenidas en el presente Manual se podrán optimizar a medida
+        que los procesos sean más prácticos en la búsqueda permanente por alcanzar la eficacia en la gestión
+        administrativa y la transparencia en los procesos de contrataciones públicas en todas sus modalidades.
+    </p>
+
+    <div class="page-break"></div>
+
+    <h3>CAPÍTULO I<br>DISPOSICIONES GENERALES</h3>
+
+    <h4>OBJETIVO</h4>
+    <p>
+        Establecer los lineamientos y pasos necesarios para el manejo adecuado de las contrataciones públicas
+        para el suministro de bienes, en el marco de la normativa de rango legal y sublegal vigente por parte
+        de las distintas unidades usuarias, unidades contratantes y comisiones de contrataciones adscritas a
+        <strong>{{ siglas_institucion_ente }}</strong>; así como también las responsabilidades administrativas
+        de c/u de los integrantes que intervienen en los distintos procedimientos de contratación.
+    </p>
+
+    <h4>ALCANCE DEL MANUAL</h4>
+    <p>
+        Este manual está dirigido a unidades usuarias, unidades contratantes y comisiones de contrataciones
+        adscritas a <strong>{{ siglas_institucion_ente }}</strong>.
+    </p>
+
+    <h4>BASE LEGAL</h4>
+    <ul>
+        <li>Constitución de la República Bolivariana de Venezuela (1999).</li>
+        <li>Ley Constitucional contra la guerra económica para la racionalidad y uniformidad en la adquisición de bienes, servicios y obras públicas, publicado en Gaceta Oficial N° 41.318 de fecha 11 de enero de 2018.</li>
+        <li>Decreto Nº 1399 con Rango, Valor y Fuerza de Ley de Contrataciones Públicas. Gaceta Oficial Extraordinaria N° 6.154 de fecha 19 de noviembre de 2014.</li>
+        <li>Ley Orgánica de la Contraloría General de la República y del Sistema Nacional de Control Fiscal. Gaceta Oficial Extraordinaria N° 6.013 del 23 de diciembre de 2010.</li>
+        <li>Ley Orgánica de Procedimientos Administrativos, publicada en Gaceta Oficial N° 2.818 del 1° de julio de 1981.</li>
+        <li>Decreto N° 1.424 con Rango, Valor y Fuerza de Ley de Reforma de Ley Orgánica de la Administración Pública. Gaceta Oficial Extraordinaria N° 6.147 del 17 de Noviembre de 2014.</li>
+        <li>Decreto con Rango, Valor y Fuerza de Ley contra la Corrupción. Gaceta Oficial Extraordinaria N° 6.699 del 02 de mayo de 2022.</li>
+        <li>Decreto N° 1423 con Rango, Valor y Fuerza de Ley de Simplificación de Trámites Administrativos. Gaceta Oficial N° 40.549 del 26 de noviembre de 2014.</li>
+        <li>Decreto N° 2174 con Rango, Valor y Fuerza de Ley Orgánica de la Administración Financiera del Sector Público. Gaceta Oficial Extraordinaria N° 6.210 extraordinaria del 30 de Diciembre de 2015 y sus reglamentos.</li>
+        <li>Reglamento de la Ley de Contrataciones Públicas, Decreto N° 6.708 de fecha 19 de mayo de 2009 publicada en Gaceta Oficial N° 39.181 del 19 de mayo de 2009.</li>
+        <li>Decreto N° 1.407, con Rango, Valor y Fuerza de Ley de Reforma Parcial del de Ley Orgánica de Bienes Públicos, publicado en Gaceta Oficial Extraordinario N° 6.155 de fecha 19 de noviembre de 2014.</li>
+        <li>Decreto Ley Orgánica de Precios Justos, publicado en Gaceta Oficial N° 40.787 de fecha 12 de noviembre de 2015.</li>
+        <li>Decreto N° 1.402 Ley de las Instituciones del Sector Bancario, publicado en Gaceta Oficial N° 40.557 de fecha martes 8 de diciembre de 2014.</li>
+        <li>Ley Orgánica de las Comunas, publicada en Gaceta Oficial N° 6.011, el 21 de diciembre de 2010.</li>
+        <li>Ley Orgánica del Poder Popular, publicada en la Gaceta Oficial Extraordinaria N° 6.812, en fecha 06 de junio de 2024.</li>
+        <li>Ley Orgánica del Sistema Económico Comunal, publicada en Gaceta Oficial Extraordinario Nº 6.011 de fecha de 21 de diciembre de 2010.</li>
+        <li>Decreto N° 9.052, mediante el cual se dicta el decreto con rango, valor y  fuerza de ley que promueve y regula las nuevas formas asociativas conjuntas entre el estado, la iniciativa comunitaria y privada para el desarrollo de la economía nacional, publicado en Gaceta Oficial N° 39.945 de fecha de 15 de junio de 2012.</li>
+        <li>Decreto N° 1.413  de Reforma del Decreto con Rango, Valor y Fuerza de Ley para la Promoción y Desarrollo de la Pequeña y Mediana Industria y Unidades de Propiedad Social,  Publicado en Gaceta Oficial N° 40.550 de fecha 27 de noviembre de 2014.</li>
+        <li>Ley Constitucional de Precios acordados, publicado en Gaceta Oficial Extraordinaria N° 6.342 de fecha 22 de noviembre de 2017.</li>
+        <li>Decreto N° 2.198 de creación del Sistema Centralizado y Estandarizado de compras públicas para la Administración Pública Nacional, publicado en Gaceta Oficial N° 40.836 de fecha de 26 de enero de 2016.</li>
+        <li>Decreto Nº 8.795 Reglamento parcial Ley Orgánica del Sistema Económico Comunal, publicado en Gaceta Oficial Nº 39.856 de fecha de 02 de febrero de 2012.</li>
+        <li>Providencia Sundde N° 003/2014, mediante la cual se fijan Criterios Contables Generales para la Determinación de Precios Justos, publicada en Gaceta Oficial Nº 40.351 de fecha de 7 de febrero de 2014. </li>
+        <li>Resolución Mintras N° 9108 sobre Registro Nacional de Empresas y Establecimientos y Solvencia Laboral, publicada en Gaceta Oficial Nº 40.655 de fecha de 7 de mayo de 2015</li>
+        <li>Providencia Sundde N° 070/2015 Modalidades Para La Determinación, Fijación Y Marcaje De Precios, publicada en Gaceta Oficial Nº 40.775 de fecha de 27 de octubre de 2015.</li>
+        <li>Providencia Nº 001/2016, mediante la cual se regula el Proceso de Adquisición de Bienes por los Órganos y Entes de la Administración Pública Nacional en el Marco del Sistema Centralizado y Estandarizado de Compras Públicas, publicada en Gaceta Oficial Nº 40.906 de fecha de 18 de mayo de 2016.</li>
+        <li>Resolución N° 006/2016 de fecha 16 de septiembre de 2016, Órgano Superior del Comando de Abastecimiento Soberano, publicada en la Gaceta Oficial de la República Bolivariana de Venezuela Nº 40.994 de fecha 22 de septiembre de 2016.</li>
+        <li>Resolución conjunta Ministerios de Planificación / Economía,  Finanzas y Comercio Exterior N° 009/2023 mediante la cual se fija el valor de la Unidad para el Cálculo Aritmético del Umbral Máximo y Mínimo (UCAU) para las Contrataciones Públicas.</li>
+        <li>Providencia SUNAI 007/2025 sobre Normas de control interno aplicables a contrataciones públicas,  publicada en la Gaceta Oficial de la República Bolivariana de Venezuela Nº 43.158 de fecha 27 de junio de 2025.</li>
+    </ul>
+
+    <h4>GLOSARIO DE TÉRMINOS</h4>
+    <p><strong>ALIANZA COMERCIAL:</strong> Son acuerdos que establece el contratante con personas naturales o jurídicas o conjunto de ellas...</p>
+    <p><strong>COMISIÓN DE CONTRATACIÓN:</strong> Cuerpo colegiado multidisciplinario, cuyos miembros son designados, por la máxima autoridad de los contratantes, representando las áreas legal, técnica y financiera.</p>
+    <p><strong>CONCURSO ABIERTO:</strong> Es la modalidad de selección pública del contratista, en la que pueden participar personas naturales y jurídicas nacionales y extranjeras, previo cumplimiento de los requisitos establecidos en la Ley, en su Reglamento y en las condiciones particulares inherentes al pliego de condiciones.</p>
+    <p><strong>EXPEDIENTE:</strong> Conjunto de documentos que conforman el historial de la contratación. Debe ser único por cada contratación (Principio de la unidad del expediente).</p>
+    <p><strong>UNIDAD CONTRATANTE:</strong> Es la unidad responsable de solicitar y analizar las ofertas, preparar el informe de recomendación, solicitar el otorgamiento de la adjudicación, recomendar la declaratoria de desierta o terminación del procedimiento.</p>
+    <p><strong>UNIDAD USUARIA:</strong> Es la unidad responsable de efectuar las actividades previas a la contratación, formular el requerimiento a la Unidad Contratante, administrar el contrato y evaluar la actuación y desempeño del contratista.</p>
+    <p><strong>UCAU:</strong> Unidad para el Cálculo Aritmético del Umbral Máximo y Mínimo. El UCAU será utilizado como multiplicador único a los fines de obtener el monto en moneda que corresponde a los umbrales máximos y mínimos establecidos.</p>
+
+    <h4>UNIDADES INTERVINIENTES</h4>
+    <ul>
+        <li>Unidad Usuaria.</li>
+        <li>Unidad Contratante.</li>
+        <li>Comisión de Contratación.</li>
+        <li><strong>{{ nombre_unidad_admin_financiera }}</strong>.</li>
+        <li>Consultoría Jurídica.</li>
+        <li>Presidencia.</li>
+        <li>Administrador(a) del Fondo de Responsabilidad Social.</li>
+    </ul>
+
+    <h4>DOCUMENTOS APLICABLES</h4>
+    <p><strong>EXPEDIENTE:</strong> Auto de apertura del expediente, Solicitud para el proceso de contratación, Reporte de disponibilidad presupuestaria, Presupuesto base, Especificaciones Técnicas, Ventajas de la contratación, Solicitud de autorización para inicio, Autorización de inicio, Pliego de condiciones, Cronograma, Acta de inicio, Llamado a participar, Publicación web, Aclaratorias, Sobres, Actas de asistencia/documentos, Calificación, Evaluación, Informe de recomendación, Documento de adjudicación, Notificación, Garantías, Contrato, Compromiso presupuestario.</p>
+    <p><em>NOTA: El expediente debe ser único por cada contratación (art.31 LOPA. Principio de la unidad del expediente) y artículo N° 19 del LCP.</em></p>
+
+    <div class="page-break"></div>
+
+    <h3>CAPÍTULO II<br>INSTRUCCIONES</h3>
+
+    <h4>INSTRUCCIONES GENERALES</h4>
+    <p>Con la finalidad de precisar y determinar algunos aspectos en materia de contrataciones, se establecen las siguientes instrucciones generales atinentes a los procedimientos previstos en el LCP y su Reglamento:</p>
+    <ol>
+        <li>Se deberá disponer de los recursos presupuestarios necesarios para el suministro de bienes, prestación de servicios y ejecución de obras, lo cual se hace constar en el precompromiso de conformidad con lo establecido en el Reglamento N°1 de la LOAFSP.</li>
+        <li>La selección de contratistas, se deberá realizar de conformidad con los principios de Economía, Planificación, Transparencia, Honestidad, Eficacia, Igualdad, Competencia, Publicidad, Promover la participación popular, Simplificación de trámites, Uso de las Tics y Precios justos.</li>
+        <li>Exclusiones de aplicación previstas en la Ley de Contrataciones Públicas contrataciones que tengan por objeto: (i) ejecución de obras/bienes en acuerdos internacionales; (ii) contratación con empresas internacionales; (iii) servicios laborales; (iv) arrendamiento de inmuebles; (v) patrocinio deportivo/artístico.</li>
+        <li>No obstante de lo anteriormente señalado, los contratantes estarán obligados a dar cumplimiento al suministro de información prevista en el LCP.</li>
+        <li>Todos los potenciales oferentes para contratar con el Estado deberán inscribirse en el Registro Nacional de Contratistas (RNC).</li>
+        <li>A los fines de la participación, sólo será necesaria la presentación del comprobante de inscripción en el Registro Único de Contrataciones Públicas.</li>
+        <li>El comprobante de inscripción sólo podrá ser requerido como requisito para la participación y adjudicación.</li>
+        <li>Se prohíbe dividir en varios contratos la ejecución de una misma obra, prestación de servicio o adquisición de bienes para evadir u omitir normas y modalidades de selección.</li>
+        <li>En la estimación de los montos para contratar, se considerarán todos los tributos correspondientes.</li>
+        <li>El contratante debe fijar un término para la presentación de ofertas no menor a <strong>siete (7) días hábiles</strong> para Concurso Abierto (Bienes) y veintiún (21) días para Concurso Abierto Anunciado Internacionalmente.</li>
+        <li>Derecho de aclaratoria: cualquier participante tiene derecho a solicitarlo por escrito dentro del plazo establecido (al menos 3 días hábiles en Concurso Abierto).</li>
+        <li>Disponibilidad presupuestaria: A los fines de la formalización del contrato, los contratantes deberán contar con la respectiva disponibilidad presupuestaria (Art 74 LCP).</li>
+        <li>El compromiso de responsabilidad social será requerido en ofertas cuyo monto total supere las 2.500 UCAU y será del 3% sobre el monto de la contratación.</li>
+        <li>El compromiso de responsabilidad social se depositará en el fondo negro primero.</li>
+        <li>Todo el régimen legal relativo a la contratación pública debe garantizar la promoción del valor agregado nacional (VAN).</li>
+        <li>La publicidad y difusión electrónica de la información sobre contrataciones estará disponible de forma gratuita y libre.</li>
+        <li>La máxima autoridad del ente contratante podrá delegar sus atribuciones, de conformidad con la normativa legal vigente.</li>
+    </ol>
+
+    <div class="page-break"></div>
+
+    <h3>CAPÍTULO III<br>PROCEDIMIENTOS Y DESCRIPCIÓN</h3>
+
+    <h4>SOLICITUD DE APERTURA DEL PROCESO DE CONTRATACIONES</h4>
+    <p><strong>OBJETIVO:</strong> Detallar las actividades que deben desarrollar las Unidades Usuarias de {{ siglas_institucion_ente }}, para solicitar la apertura de procesos de Contratación Pública.</p>
+    <p><strong>ALCANCE:</strong> Para todas las unidades usuarias/solicitantes de {{ siglas_institucion_ente }} que determinen la necesidad de suministro de bienes.</p>
+    <p><strong>NORMAS ESPECÍFICAS:</strong> El órgano contratante deberá efectuar actividades previas (especificaciones técnicas, presupuesto base). La Unidad usuaria deberá contar con la disponibilidad presupuestaria. Se procederá por Concurso abierto si la adjudicación es superior a 20.000 UCAU.</p>
+
+    <p><strong>DESCRIPCIÓN</strong></p>
+    <table class="proc-table">
+        <thead>
+            <tr>
+                <th width="30%">UNIDAD EJECUTORA</th>
+                <th width="70%">ACCIÓN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align: center; font-weight: bold;">UNIDAD USUARIA / SOLICITANTE</td>
+                <td>
+                    1. La unidad usuaria determina la necesidad de realizar proceso de contratación para el suministro de bienes.<br>
+                    2. En caso de suministro de bienes: Se procede a determinar las especificaciones técnicas, el presupuesto base (mediante ofertas y estudios de mercado) y se establecen las ventajas de la contratación a nivel económico y técnico. (Documentos B)<br>
+                    3. La unidad usuaria recibe el reporte de disponibilidad presupuestaria a la fecha.<br>
+                    4. La unidad usuaria evalúa el procedimiento de apertura del proceso de contratación (con los Documentos B) bajo los parámetros de cuantía con la UCAU, analiza y determina la modalidad de selección favorable para la solicitud de contratación.<br>
+                    5. La unidad usuaria dependiendo de la modalidad de selección resultante envía solicitud para el proceso de contratación a:<br>
+                    &nbsp;&nbsp;&nbsp;5.1. Comisión de Contratación si la modalidad es Concurso Abierto.<br>
+                    6. Fin del procedimiento.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <h4>ACTIVIDADES DE LA COMISIÓN DE CONTRATACIONES</h4>
+    <p><strong>OBJETIVO:</strong> Establecer los pasos a seguir para coordinar las actividades de la(s) Comisión(es) de Contratación(es) de <strong>{{ siglas_institucion_ente }}</strong>.</p>
+    <p><strong>NORMAS ESPECÍFICAS:</strong> La comisión estará integrada por un número impar de miembros principales y suplentes (áreas jurídica, técnica, financiera). Atribuciones según Art. 14 LCP y Reglamento.</p>
+
+    <p><strong>DESCRIPCIÓN</strong></p>
+    <table class="proc-table">
+        <thead>
+            <tr>
+                <th width="30%">UNIDAD EJECUTORA</th>
+                <th width="70%">ACCIÓN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align: center; font-weight: bold;">COMISIÓN DE CONTRATACIONES</td>
+                <td>
+                    1. Elabora la apertura del expediente/ acta de inicio.<br>
+                    2. Debe conformar el expediente de acuerdo a lo estipulado en el artículo N° 32 del RLCP.<br>
+                    3. Elabora el Pliego de condiciones, como documento que rige para las modalidades de selección de contratistas establecidas en el artículo N° 66 del LCP; las condiciones deben ser descritas de manera clara y precisa.<br>
+                    4. Realiza el llamado y/o invitaciones a los participantes.<br>
+                    5. Recibe las ofertas y apertura de los sobres.<br>
+                    6. Debe evaluar las ofertas y elaborar informe de recomendación, así como el documento de Adjudicación.<br>
+                    7. Prepara documento dirigido a la máxima autoridad o a quien se delegue, para la aprobación y firma del documento de adjudicación.<br>
+                    8. Al recibir (de la máxima autoridad o a quien se delegue) el documento de adjudicación, se procede a notificar al beneficiario.<br>
+                    9. Remite expediente a la unidad usuaria una vez notificado el oferente.<br>
+                    10. Fin del Procedimiento.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <h4>PROCEDIMIENTO DE CONCURSO ABIERTO (SUMINISTRO DE BIENES)</h4>
+    <p><strong>OBJETIVO:</strong> Sistematizar las actividades que deben realizar la(s) Comisión(es) de Contratación(es) de <strong>{{ siglas_institucion_ente }}</strong> en Concurso Abierto.</p>
+    <p><strong>ALCANCE:</strong> Adjudicaciones superiores a 20.000 UCAU.</p>
+    <p><strong>NORMAS ESPECÍFICAS:</strong> Lapsos y términos según Art. 81, 82, 83 LCP. Publicación en web del SNC y del Ente.</p>
+
+    <p><strong>DESCRIPCIÓN</strong></p>
+    <table class="proc-table">
+        <thead>
+            <tr>
+                <th width="30%">RESPONSABLE</th>
+                <th width="70%">ACTIVIDAD / ACCIÓN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="center bold">COMISIÓN DE CONTRATACIONES</td>
+                <td>
+                    1. Realiza auto de apertura del expediente.<br>
+                    2. Recibe y revisa documentación proveniente de la unidad usuaria (disponibilidad, documentos B).<br>
+                    3. Procede a elaborar solicitud de autorización para inicio del proceso de contratación y lo envía a la Máxima Autoridad.
+                </td>
+            </tr>
+            <tr>
+                <td class="center bold">MÁXIMA AUTORIDAD</td>
+                <td>4. Aprueba el inicio del proceso de contratación y lo envía a la comisión.</td>
+            </tr>
+            <tr>
+                <td class="center bold">COMISIÓN DE CONTRATACIONES</td>
+                <td>
+                    5. Recibe autorización del inicio.<br>
+                    6. Elabora el pliego de condiciones (Art 66 LCP).<br>
+                    7. Realiza llamado a participar (publicación en web SNC y Ente).<br>
+                    8. Envía el llamado a <strong>{{ nombre_unidad_sistemas_tecnologia }}</strong> para que publique en la web.
+                </td>
+            </tr>
+            <tr>
+                <td class="center bold">{{ nombre_unidad_sistemas_tecnologia }}</td>
+                <td>9. Publica llamado en la fecha solicitada y envía imagen a la comisión.</td>
+            </tr>
+            <tr>
+                <td class="center bold">COMISIÓN DE CONTRATACIONES</td>
+                <td>
+                    10. Recibe imágenes de la publicación y anexa al expediente.<br>
+                    11. Entrega pliego de condiciones y cronograma a los participantes.
+                </td>
+            </tr>
+            <tr>
+                <td class="center bold">PARTICIPANTE</td>
+                <td>
+                    12. Adquiere el pliego de condiciones.<br>
+                    &nbsp;&nbsp;12.1. Solicita aclaratorias si hay dudas (3 días hábiles).<br>
+                    &nbsp;&nbsp;12.2. Entrega sobre en la fecha establecida (mínimo 7 días hábiles para bienes).
+                </td>
+            </tr>
+            <tr>
+                <td class="center bold">COMISIÓN DE CONTRATACIONES</td>
+                <td>
+                    13. Recibe solicitud de aclaratorias (si las hubiere).<br>
+                    14. Realiza reunión/comunicado esclareciendo dudas.<br>
+                    15. <strong>Para Acto Único de recepción y apertura:</strong><br>
+                    &nbsp;&nbsp;15.1. Efectúa acto único de recepción, levanta acta.<br>
+                    &nbsp;&nbsp;15.2. Califica a los oferentes (Pasa/No Pasa).<br>
+                    &nbsp;&nbsp;15.3. Devuelve sobres a descalificados.<br>
+                    &nbsp;&nbsp;15.4. Evalúa ofertas de los calificados.<br>
+                    16. <strong>Para Sobres Separados / Actos Separados:</strong> (Aplica procedimiento específico de recepción diferida o actos separados según corresponda).
+                </td>
+            </tr>
+            <tr>
+                <td class="center bold">COMISIÓN DE CONTRATACIONES</td>
+                <td>
+                    18. Elabora el informe de recomendación.<br>
+                    19. Envía informe y documento de adjudicación a la Máxima Autoridad.
+                </td>
+            </tr>
+            <tr>
+                <td class="center bold">MÁXIMA AUTORIDAD</td>
+                <td>20. Recibe, analiza y otorga la adjudicación (firma).</td>
+            </tr>
+            <tr>
+                <td class="center bold">COMISIÓN DE CONTRATACIONES</td>
+                <td>
+                    21. Recibe expediente firmado, elabora y envía notificación de adjudicación al beneficiario (2 días hábiles).<br>
+                    22. Notifica a los no beneficiados.
+                </td>
+            </tr>
+            <tr>
+                <td class="center bold">OFERENTE</td>
+                <td>22. Recibe notificación de la adjudicación.</td>
+            </tr>
+            <tr>
+                <td class="center bold">COMISIÓN DE CONTRATACIONES</td>
+                <td>23. Remite expediente a la unidad usuaria.</td>
+            </tr>
+            <tr>
+                <td class="center bold">UNIDAD USUARIA</td>
+                <td>24. Recibe expediente y solicita Garantías al beneficiario.</td>
+            </tr>
+            <tr>
+                <td class="center bold">OFERENTE</td>
+                <td>25. Entrega garantías de ley o comunicación de retenciones.</td>
+            </tr>
+            <tr>
+                <td class="center bold">UNIDAD USUARIA</td>
+                <td>26. Recibe garantías y remite a Consultoría Jurídica.</td>
+            </tr>
+            <tr>
+                <td class="center bold">CONSULTORÍA JURÍDICA</td>
+                <td>
+                    27. Revisa garantías y documentos legales, elabora el Contrato.<br>
+                    28. Remite expediente a <strong>{{ nombre_unidad_admin_financiera }}</strong>.
+                </td>
+            </tr>
+            <tr>
+                <td class="center bold">{{ nombre_unidad_admin_financiera }}</td>
+                <td>
+                    29. Recibe expediente y formaliza el compromiso presupuestario.<br>
+                    30. Remite contrato a la unidad usuaria para firmas.
+                </td>
+            </tr>
+            <tr>
+                <td class="center bold">UNIDAD USUARIA</td>
+                <td>31. Recibe contrato y notifica al oferente para la firma.</td>
+            </tr>
+            <tr>
+                <td class="center bold">OFERENTE</td>
+                <td>32. Recibe notificación y firma el contrato (plazo 8 días hábiles).</td>
+            </tr>
+            <tr>
+                <td class="center bold">UNIDAD USUARIA</td>
+                <td>33. Remite contrato firmado a <strong>{{ nombre_unidad_admin_financiera }}</strong>.</td>
+            </tr>
+            <tr>
+                <td class="center bold">{{ nombre_unidad_admin_financiera }}</td>
+                <td>34. Recibe el contrato, lo incorpora al expediente único y lo resguarda por 5 años.</td>
+            </tr>
+            <tr>
+                <td class="center bold">-</td>
+                <td>35. Fin del procedimiento.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="page-break"></div>
+    <div style="text-align: center; font-weight: bold; margin-top: 5cm; font-size: 12pt;">
+        FIN DEL PROCEDIMIENTO
+    </div>
+
+</body>
+</html>
