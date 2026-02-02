@@ -4,3 +4,4 @@ pytest-playwright
 playwright
 black
 flake8
+pre-commit

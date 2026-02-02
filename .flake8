@@ -5,3 +5,8 @@ max-line-length = 92
 extend-ignore = E203
 # Excluimos carpetas que no nos importan
 exclude = .git,__pycache__,docs/source/conf.py,old,build,dist,migrations
+
+# --- AGREGA ESTO AL FINAL ---
+# Ignorar error de linea larga (E501) solo en el archivo de servicios
+per-file-ignores =
+    contratos/services.py:E501

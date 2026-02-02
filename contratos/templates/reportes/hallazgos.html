@@ -27,7 +27,7 @@
             text-transform: uppercase;
             margin-bottom: 5px;
         }
-        
+
         .sub-title {
             font-size: 10pt;
             text-transform: uppercase;
@@ -71,7 +71,7 @@
         }
 
         /* COLORES DE ESTADO - RESTAURADOS */
-        
+
         /* Estilos comunes (negrita y centrado) */
         .status-si, .status-no, .status-na {
             font-weight: bold;
@@ -80,20 +80,20 @@
 
         /* Verde para SI */
         .status-si {
-            color: #2E7D32; 
+            color: #2E7D32;
         }
 
         /* Rojo para NO */
         .status-no {
-            color: #D32F2F; 
+            color: #D32F2F;
         }
 
         /* Gris para N/A */
         .status-na {
-            color: #9E9E9E; 
+            color: #9E9E9E;
             font-style: normal;
         }
-        
+
         /* FOOTER / FIRMAS */
         .footer-section {
             margin-top: 40px;
@@ -105,7 +105,7 @@
             width: 200px;
             padding-top: 5px;
         }
-        
+
         /* LEYENDA */
         .leyenda {
             margin-top: 30px;
@@ -139,7 +139,7 @@
                     <div style="margin-bottom: 4px;"><strong>CÓDIGO:</strong> {{ reporte.nomenclatura }}</div>
                     <div><strong>MODALIDAD:</strong> ACTO ÚNICO APERTURA ÚNICA</div>
                 </td>
-                
+
                 <td style="width: 35%; border: 1px solid #000; padding: 6px; vertical-align: top;">
                     <div style="margin-bottom: 25px;"><strong>ELABORADO POR:</strong> {{ reporte.persona_contacto }}</div>
                     <div><strong>FECHA:</strong> {{ reporte.fecha_revision }}</div>
@@ -149,7 +149,7 @@
                 <td style="border: 1px solid #000; padding: 8px; text-align: center; font-weight: bold; vertical-align: middle; background-color: #fff;">
                     REPORTE DE HALLAZGOS
                 </td>
-                
+
                 <td style="border: 1px solid #000; padding: 6px; vertical-align: top;">
                     <div style="margin-bottom: 15px;"><strong>REVISADO POR:</strong> </div>
                     <div><strong>FECHA:</strong></div>
@@ -173,7 +173,7 @@
             <tr>
                 <td style="text-align: center;">{{ item.numero }}</td>
                 <td>{{ item.pregunta }}</td>
-                
+
                 <td class="{% if item.cumple == 'SI' %}status-si{% elif item.cumple == 'NO' %}status-no{% else %}status-na{% endif %}">
                     {% if item.cumple == 'NA' %}
                         N/A
