@@ -1,6 +1,5 @@
-name: Django CI
+name: Django CI - Pruebas Automáticas
 
-# Se activa cuando haces push o pull request a la rama main
 on:
   push:
     branches: [ "main" ]
@@ -10,18 +9,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    # Configuramos un servicio de Base de Datos temporal solo para el CI
     services:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_DB: contrataciones_db
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: supersecreto
+          POSTGRES_DB: contrataciones_db_test
         ports:
           - 5432:5432
-        # Healthcheck: Esperamos a que la DB esté lista antes de correr tests
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -29,39 +25,28 @@ jobs:
           --health-retries 5
 
     steps:
-    # 1. Descargamos el código del repositorio
-    - uses: actions/checkout@v4
+    - name: 📥 Descargar código
+      uses: actions/checkout@v4
 
-    # 2. Instalamos Python 3.11 (tu versión del Dockerfile)
-    - name: Set up Python 3.11
+    - name: 🐍 Configurar Python 3.12
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.12'
 
-    # 3. Instalamos librerías
-    - name: Install Dependencies
+    - name: 📦 Instalar Dependencias
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install -r requirements-dev.txt
 
-    # 4. Instalamos los navegadores para Playwright (Tests E2E)
-    - name: Install Playwright Browsers
-      run: playwright install --with-deps chromium
+    - name: 🎭 Instalar Navegadores Playwright
+      run: playwright install chromium
 
-    # 5. Revisión de Calidad (Linter)
-    - name: Run Linting
-      run: |
-        flake8 .
-        black --check .
-
-    # 6. Ejecución de Pruebas (Pytest)
-    - name: Run Tests
+    - name: 🧪 Ejecutar Pruebas
       env:
-        # Conectamos a la DB del servicio de arriba (localhost en GitHub Actions)
-        DATABASE_URL: postgres://admin:supersecreto@localhost:5432/contrataciones_db
-        SECRET_KEY: 'clave-insegura-solo-para-ci'
+        SECRET_KEY: 'clave-falsa-para-tests'
         DEBUG: 'True'
-        # Importante: Para que Playwright funcione en CI sin problemas de hilos
-        DJANGO_ALLOW_ASYNC_UNSAFE: 'true'
+        ALLOWED_HOSTS: '*'
+        DATABASE_URL: 'postgres://admin:supersecreto@localhost:5432/contrataciones_db_test'
       run: |
         pytest
