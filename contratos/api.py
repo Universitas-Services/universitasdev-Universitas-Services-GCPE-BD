@@ -42,7 +42,7 @@ def listar_proveedores(request):
 # --- ENDPOINTS DE COMPLIANCE (AUDITORÍA) ---
 
 
-@api.post("/compliance", response=ComplianceSchema, auth=JWTAuth())
+@api.post("/compliance", response=ComplianceOut, auth=JWTAuth())
 def crear_reporte_compliance(request, payload: ComplianceSchema):
     # SEGURIDAD REAL: El auditor es quien está logueado
     usuario_auditor = request.auth
