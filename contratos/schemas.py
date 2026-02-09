@@ -6,34 +6,34 @@ from .models import Proveedor, ComplianceExpediente, ManualConfiguracion
 
 
 # Esquema para PROVEEDORES
-class ProveedorOut(ModelSchema):
-    class Meta:  # <--- ANTES ERA 'Config', AHORA ES 'Meta'
+class ProveedorSchema(ModelSchema):
+    class Meta:
         model = Proveedor
         exclude = ["creado_por", "fecha_registro"]
 
-    # 1. RIF: Formato estricto venezolano (Letra-8Digitos-1Digito)
+    # 1. RIF (Nombre corregido: rif_proveedor)
     @field_validator("rif_proveedor")
     def validar_rif(cls, v):
         if not v:
             return v
-        # Regex: Empieza con V,E,J,P,G (mayus/minus), guion, 8 nums, guion, 1 num
+        # Regex para RIF (V-12345678-9)
         patron = r"^[VEJPGvejpg]-\d{8}-\d$"
         if not re.match(patron, v):
             raise ValueError("El RIF debe tener el formato correcto (Ej: J-12345678-0)")
-        return v.upper()  # Lo guardamos siempre en mayúsculas
+        return v.upper()
 
-    # 2. TELÉFONO: Solo números y 10 u 11 dígitos (ajustado a celulares Vzla)
-    @field_validator("telefono")
+    # 2. TELÉFONO (Nombre corregido: telefono_proveedor)
+    @field_validator("telefono_proveedor")
     def validar_telefono(cls, v):
         if not v:
             return v
         if not v.isdigit():
             raise ValueError("El teléfono debe contener solo números.")
-        if len(v) not in [10, 11]:  # Aceptamos 0414... (11) o sin el 0 inicial (10)
+        if len(v) not in [10, 11]:
             raise ValueError("El teléfono debe tener 10 u 11 dígitos.")
         return v
 
-    # 3. CORREO: Formato Email
+    # 3. CORREO (Nombre corregido: correo_proveedor)
     @field_validator("correo_proveedor")
     def validar_correo(cls, v):
         if not v:
@@ -41,10 +41,10 @@ class ProveedorOut(ModelSchema):
         patron = r"^[\w\.-]+@[\w\.-]+\.\w+$"
         if not re.match(patron, v):
             raise ValueError("Email inválido.")
-        return v.lower()  # Guardar siempre en minúsculas
+        return v.lower()
 
-    # 4. AÑOS DE EXPERIENCIA: No puede ser negativo
-    @field_validator("años_experiencia")
+    # 4. AÑOS DE EXPERIENCIA (Nombre corregido: anos_experiencia)
+    @field_validator("anos_experiencia")
     def validar_experiencia(cls, v):
         if v is None:
             return v
@@ -52,7 +52,7 @@ class ProveedorOut(ModelSchema):
             raise ValueError("Los años de experiencia no pueden ser negativos.")
         return v
 
-    # 5. FECHAS: No pueden ser futuras (Ej: Estado Financiero)
+    # 5. FECHAS (Nombre coincide: fecha_estado_financiero)
     @field_validator("fecha_estado_financiero")
     def validar_fechas_pasadas(cls, v):
         if not v:
@@ -61,7 +61,7 @@ class ProveedorOut(ModelSchema):
             raise ValueError("La fecha no puede ser futura.")
         return v
 
-    # 6. NIVEL CONTRATACIÓN: Solo valores permitidos
+    # 6. NIVEL (Nombre coincide: nivel_contratacion)
     @field_validator("nivel_contratacion")
     def validar_nivel(cls, v):
         if not v:
@@ -69,24 +69,22 @@ class ProveedorOut(ModelSchema):
         niveles_validos = ["ALTA", "MEDIA", "BAJA"]
         if v.upper() not in niveles_validos:
             raise ValueError(f'Nivel inválido. Opciones: {", ".join(niveles_validos)}')
-        return v
+        return v.upper()
 
 
-# Esquema para CREAR el reporte (Input)
+# --- Resto de los esquemas (Compliance, Manual, etc.) ---
 class ComplianceSchema(ModelSchema):
-    class Meta:  # <--- ANTES ERA 'Config', AHORA ES 'Meta'
+    class Meta:
         model = ComplianceExpediente
         exclude = ["id", "fecha_creacion", "usuario_revisor"]
 
 
-# Esquema para MOSTRAR el reporte (Output)
 class ComplianceOut(ModelSchema):
-    class Meta:  # <--- ANTES ERA 'Config', AHORA ES 'Meta'
+    class Meta:
         model = ComplianceExpediente
         fields = "__all__"
 
 
-# Esquema para generar el MANUAL
 class ManualSchema(ModelSchema):
     class Meta:
         model = ManualConfiguracion
