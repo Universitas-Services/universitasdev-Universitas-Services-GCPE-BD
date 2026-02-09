@@ -47,7 +47,7 @@ CATALOGO_PREGUNTAS = {
         "condicion_error": "Se constató que no incorporó el Registro de Adquirientes.",
         "criterio_legal": "Artículos 19, 20, 65 LCP; 32.13 RLCP; 31, 32 LOPA; 6 LCC; 38.5, 91.1.9 LOCGR; 34 (2) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    "caaue7_incluye_solicitudes_modificaciones_aclaratorias": {
+    "caaue7_incluye_solicitudes_modificaciones": {
         "numero": "7",
         "pregunta": "¿El expediente de contrataciones incluyó solicitudes de modificaciones y aclaratorias?",
         "puntos": 2,
@@ -75,28 +75,28 @@ CATALOGO_PREGUNTAS = {
         "condicion_error": "Se constató que no contiene las Ofertas.",
         "criterio_legal": "Artículos 19, 20 LCP; 32.8 RLCP; 31, 32 LOPA; 6 LCC; 38.5.91.1.9.29 LOCGR; 34 (2) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    "caaue11_incluye_garantias_sostenimiento_oferta": {
+    "caaue11_incluye_garantias_sostenimiento": {
         "numero": "11",
         "pregunta": "¿El expediente de contrataciones agregó las Garantías de sostenimiento de la oferta de los oferentes?",
         "puntos": 5,
         "condicion_error": "Se evidenció que no contiene las Garantías de sostenimiento de la oferta de los oferentes.",
         "criterio_legal": "Artículos 19, 20, 63, 64, LCP; 32.13 RLCP; 31, 32 LOPA; 6 LCC; 38.5.91.1.9.29 LOCGR; 34 (2) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    "caaue12_incluye_certificado_rnc_oferentes": {
+    "caaue12_incluye_certificado_rnc": {
         "numero": "12",
         "pregunta": "¿El expediente de contrataciones incluyó el certificado de inscripción ante el Registro Nacional de Contratistas de los oferentes?",
         "puntos": 3,
         "condicion_error": "Se constató que no contiene el certificado de inscripción ante el Registro Nacional de Contratistas de los oferentes.",
         "criterio_legal": "Artículos 19, 20, 42.1, 47 LCP; 32.13, 85 RLCP; 31, 32 LOPA; 6 LCC; 38.5.91.1.9.29 LOCGR; 34 (2) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    "caaue13_incluye_certificado_calificacion_snc": {
+    "caaue13_incluye_certificado_snc": {
         "numero": "13",
         "pregunta": "¿El expediente de contrataciones agregó certificado de la calificación de los oferentes del SNC?",
         "puntos": 3,
         "condicion_error": "Se evidenció que no contiene el certificado de la calificación de los oferentes del SNC.",
         "criterio_legal": "Artículos 19, 20, 42.2 LCP; 32.13 RLCP; 31, 32 LOPA; 6 LCC; 38.5.91.1.9.29 LOCGR; 34 (2) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    " caaue14_incluye_solvencias_requeridas": {
+    " caaue14_incluye_solvencias": {
         "numero": "14",
         "pregunta": "¿El expediente de contrataciones incorporó las Solvencias requeridas (banavih, laboral, ivss, inces)?",
         "puntos": 5,
@@ -117,7 +117,7 @@ CATALOGO_PREGUNTAS = {
         "condicion_error": "Se constató que no contiene la adjudicación o su equivalente.",
         "criterio_legal": "Artículos 19, 20 LCP; 32.10 RLCP; 31, 32 LOPA; 1,6 LCC; 6 LCC; 38.5.91.1.9.29 LOCGR; 34 (2) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    "caaue17_incluye_notificacion_interesados": {
+    "caaue17_incluye_notificacion": {
         "numero": "17",
         "pregunta": "¿El expediente de contrataciones incluyó la notificación de interesados?",
         "puntos": 4,
@@ -138,35 +138,35 @@ CATALOGO_PREGUNTAS = {
         "condicion_error": "Se evidenció que no contiene el Contrato, orden de compra u orden de servicio.",
         "criterio_legal": "Artículos 6.32, 19, 20 LCP; 32.12, 132 RLCP; 31, 32 LOPA; 6 LCC; 38.5.91.1.9.29 LOCGR; 34 (2) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    "caaue20_incluye_cumplimiento_responsabilidad_social": {
+    "caaue20_incluye_resp_social": {
         "numero": "20",
         "pregunta": "¿El expediente incluyó el cumplimiento del compromiso de responsabilidad social?",
         "puntos": 2,
         "condicion_error": "Se constató que no contiene el cumplimiento del compromiso de responsabilidad social.",
         "criterio_legal": "Artículos 6.24, 19, 20 LCP; 32.13 RLCP; 31, 32 LOPA; 6 LCC; 38.5.91.1.9.29 LOCGR; 34 (2) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    "caaue21_identificacion_nomenclatura_expediente": {
+    "caaue21_identificacion_nomenclatura": {
         "numero": "21",
         "pregunta": "¿El expediente fue debidamente identificado con la nomenclatura del proceso, nombre del contratante y contratista, y objeto, conforme a lo establecido en el Art. 34, numeral 1 de las Normas SUNAI?",
         "puntos": 3,
         "condicion_error": "Se evidenció que el expediente no fue debidamente identificado con la nomenclatura del proceso, nombre del contratante y contratista, y objeto, conforme a lo establecido en el Art. 34, numeral 1 de las Normas SUNAI.",
         "criterio_legal": "Artículos 32 RLCP; 31, 32 LOPA; 6 LCC; 38.5.91.1.9.29 LOCGR; 34 (1) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    "caaue22_expediente_foliado_cronologicamente": {
+    "caaue22_expediente_foliado": {
         "numero": "22",
         "pregunta": "¿Se verificó que todos los documentos del expediente se encontraban debidamente foliados en estricto orden cronológico, conforme a su fecha de incorporación, cumpliendo con lo establecido en el Art. 34, numeral 4 de las Normas SUNAI?",
         "puntos": 2,
         "condicion_error": "Se constató que no se verificó que todos los documentos del expediente se encontraban debidamente foliados en estricto orden cronológico, conforme a su fecha de incorporación, cumpliendo con lo establecido en el Art. 34, numeral 4 de las Normas SUNAI.",
         "criterio_legal": "Artículos 32 RLCP; 31, 32 LOPA; 6 LCC; 38.5.91.1.9.29 LOCGR; 34 (4) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    "caaue23_identificacion_tomos_piezas": {
+    "caaue23_identificacion_tomos": {
         "numero": "23",
         "pregunta": "¿Se constató que el expediente, en caso de estar conformado por múltiples piezas o tomos, cada unidad documental se encontraba debidamente identificada y vinculada al proceso principal, conforme al Art. 34, numeral 4 de las Normas SUNAI?",
         "puntos": 2,
         "condicion_error": "Se evidenció que no se constató que el expediente, en caso de estar conformado por múltiples piezas o tomos, cada unidad documental se encontraba debidamente identificada y vinculada al proceso principal, conforme al Art. 34, numeral 4 de las Normas SUNAI.",
         "criterio_legal": "Artículos 32 RLCP; 31, 32 LOPA; 6 LCC; 38.5.91.1.9.29 LOCGR; 34 (4) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    "caaue24_archivo_custodia_expediente": {
+    "caaue24_archivo_custodia": {
         "numero": "24",
         "pregunta": "¿Se verificó que el archivo y custodia del expediente se realizó en la unidad administrativa financiera del ente contratante, (o en la unidad que corresponda según la normativa interna) cumpliendo con lo dispuesto en el Art. 34, numeral 5 de la normativa aplicable",
         "puntos": 2,
