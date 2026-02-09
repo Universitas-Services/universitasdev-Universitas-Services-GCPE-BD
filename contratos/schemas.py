@@ -5,39 +5,13 @@ import re
 from .models import Proveedor, ComplianceExpediente, ManualConfiguracion
 
 
-# ==========================================
-# ESQUEMA DE PROVEEDORES (MODO EXPLÍCITO)
-# ==========================================
 class ProveedorSchema(ModelSchema):
     class Meta:
         model = Proveedor
-        # En vez de excluir, listamos TODO lo que validamos para asegurar que existe
-        fields = [
-            "correo_proveedor",
-            "nombre_proveedor",
-            "rif_proveedor",
-            "tipo_persona",
-            "tipo_entidad_juridica",
-            "estado",
-            "municipio",
-            "parroquia",
-            "direccion_fiscal",
-            "telefono_proveedor",
-            "nombre_rep_legal",
-            "cedula_rep_legal",
-            "tiene_rnc",
-            "tiene_solvencia_laboral",
-            "tiene_licencia_municipal",
-            "actividad_comercial_principal",
-            "area_especialidad",
-            "anos_experiencia",
-            "fecha_estado_financiero",
-            "patrimonio_reportado",
-            "nivel_contratacion",
-        ]
+        fields = "__all__"  # Traemos todo para evitar problemas de exclusion
+        exclude = ["creado_por", "fecha_registro"]
 
-    # 1. RIF
-    @field_validator("rif_proveedor")
+    @field_validator("rif_proveedor", check_fields=False)
     def validar_rif(cls, v):
         if not v:
             return v
@@ -46,8 +20,7 @@ class ProveedorSchema(ModelSchema):
             raise ValueError("El RIF debe tener el formato correcto (Ej: J-12345678-0)")
         return v.upper()
 
-    # 2. TELÉFONO
-    @field_validator("telefono_proveedor")
+    @field_validator("telefono_proveedor", check_fields=False)
     def validar_telefono(cls, v):
         if not v:
             return v
@@ -57,8 +30,7 @@ class ProveedorSchema(ModelSchema):
             raise ValueError("El teléfono debe tener 10 u 11 dígitos.")
         return v
 
-    # 3. CORREO
-    @field_validator("correo_proveedor")
+    @field_validator("correo_proveedor", check_fields=False)
     def validar_correo(cls, v):
         if not v:
             return v
@@ -67,8 +39,7 @@ class ProveedorSchema(ModelSchema):
             raise ValueError("Email inválido.")
         return v.lower()
 
-    # 4. AÑOS DE EXPERIENCIA
-    @field_validator("anos_experiencia")
+    @field_validator("anos_experiencia", check_fields=False)
     def validar_experiencia(cls, v):
         if v is None:
             return v
@@ -76,8 +47,7 @@ class ProveedorSchema(ModelSchema):
             raise ValueError("Los años de experiencia no pueden ser negativos.")
         return v
 
-    # 5. FECHAS
-    @field_validator("fecha_estado_financiero")
+    @field_validator("fecha_estado_financiero", check_fields=False)
     def validar_fechas_pasadas(cls, v):
         if not v:
             return v
@@ -85,8 +55,7 @@ class ProveedorSchema(ModelSchema):
             raise ValueError("La fecha no puede ser futura.")
         return v
 
-    # 6. NIVEL
-    @field_validator("nivel_contratacion")
+    @field_validator("nivel_contratacion", check_fields=False)
     def validar_nivel(cls, v):
         if not v:
             return v
@@ -96,9 +65,7 @@ class ProveedorSchema(ModelSchema):
         return v.upper()
 
 
-# ==========================================
-# RESTO DE ESQUEMAS
-# ==========================================
+# ... (El resto de clases ComplianceSchema, etc. igual)
 class ComplianceSchema(ModelSchema):
     class Meta:
         model = ComplianceExpediente
