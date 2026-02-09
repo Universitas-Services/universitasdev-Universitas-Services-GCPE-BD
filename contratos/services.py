@@ -47,7 +47,7 @@ CATALOGO_PREGUNTAS = {
         "condicion_error": "Se constató que no incorporó el Registro de Adquirientes.",
         "criterio_legal": "Artículos 19, 20, 65 LCP; 32.13 RLCP; 31, 32 LOPA; 6 LCC; 38.5, 91.1.9 LOCGR; 34 (2) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    "caaue7_incluye_solicitudes_modificaciones": {
+    "caaue7_incluye_modificaciones": {
         "numero": "7",
         "pregunta": "¿El expediente de contrataciones incluyó solicitudes de modificaciones y aclaratorias?",
         "puntos": 2,
@@ -96,7 +96,7 @@ CATALOGO_PREGUNTAS = {
         "condicion_error": "Se evidenció que no contiene el certificado de la calificación de los oferentes del SNC.",
         "criterio_legal": "Artículos 19, 20, 42.2 LCP; 32.13 RLCP; 31, 32 LOPA; 6 LCC; 38.5.91.1.9.29 LOCGR; 34 (2) NORMAS DE CONTROL INTERNO SUNAI.",
     },
-    " caaue14_incluye_solvencias": {
+    "caaue14_incluye_solvencias": {
         "numero": "14",
         "pregunta": "¿El expediente de contrataciones incorporó las Solvencias requeridas (banavih, laboral, ivss, inces)?",
         "puntos": 5,
