@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from ninja import ModelSchema
 from pydantic import field_validator
 from datetime import date
@@ -96,3 +97,10 @@ class ManualSchema(ModelSchema):
             "nombre_unidad_admin_financiera",
             "nombre_unidad_sistemas_tecnologia",
         ]
+
+
+class UserProfileSchema(ModelSchema):
+    class Meta:
+        model = User
+        # Solo devolvemos datos seguros, NUNCA el password
+        fields = ["username", "email"]

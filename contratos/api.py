@@ -16,6 +16,7 @@ from .schemas import (
     ComplianceSchema,
     ComplianceOut,
     ManualSchema,
+    UserProfileSchema,
 )
 from .services import generar_data_para_pdf
 
@@ -118,3 +119,12 @@ def generar_manual_pdf(request, payload: ManualSchema):
     ] = f'attachment; filename="{nombre_archivo}"'  # noqa: E702
 
     return response
+
+
+# --- ENDPOINT DE PERFIL DE USUARIO ---
+@api.get("/me", response=UserProfileSchema, auth=JWTAuth())
+def obtener_perfil(request):
+    """
+    Devuelve los datos del usuario logueado basándose en su Token.
+    """
+    return request.auth
