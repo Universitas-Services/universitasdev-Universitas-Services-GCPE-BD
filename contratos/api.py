@@ -10,7 +10,13 @@ from typing import List
 
 # Importaciones locales
 from .models import Proveedor, ComplianceExpediente
-from .schemas import ProveedorSchema, ComplianceSchema, ComplianceOut, ManualSchema
+from .schemas import (
+    ProveedorSchema,
+    ProveedorOut,
+    ComplianceSchema,
+    ComplianceOut,
+    ManualSchema,
+)
 from .services import generar_data_para_pdf
 
 # Inicializamos la API
@@ -34,7 +40,7 @@ def crear_proveedor(request, payload: ProveedorSchema):
     return {"id": proveedor.id, "mensaje": "Proveedor creado exitosamente"}
 
 
-@api.get("/proveedores", response=List[ProveedorSchema], auth=JWTAuth())
+@api.get("/proveedores", response=List[ProveedorOut], auth=JWTAuth())
 def listar_proveedores(request):
     return Proveedor.objects.all()
 

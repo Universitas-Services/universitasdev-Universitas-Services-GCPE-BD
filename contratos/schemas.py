@@ -65,6 +65,15 @@ class ProveedorSchema(ModelSchema):
         return v.upper()
 
 
+# NUEVO: Esquema solo para SALIDA (Listar)
+class ProveedorOut(ModelSchema):
+    class Meta:
+        model = Proveedor
+        fields = "__all__"
+        # Quitamos los validadores porque al leer de la BD no queremos que falle
+        # si un dato antiguo está "feo".
+
+
 # ... (El resto de clases ComplianceSchema, etc. igual)
 class ComplianceSchema(ModelSchema):
     class Meta:
