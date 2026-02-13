@@ -6,7 +6,12 @@ from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.shortcuts import get_object_or_404
 from typing import List
+from django.db import transaction
+from .models import PerfilUsuario
 
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from ninja.errors import HttpError
 
 # Importaciones locales
 from .models import Proveedor, ComplianceExpediente
@@ -17,6 +22,7 @@ from .schemas import (
     ComplianceOut,
     ManualSchema,
     UserProfileSchema,
+    UserRegisterSchema,
 )
 from .services import generar_data_para_pdf
 
@@ -128,3 +134,37 @@ def obtener_perfil(request):
     Devuelve los datos del usuario logueado basándose en su Token.
     """
     return request.auth
+
+
+#  El Endpoint de Registro
+@api.post("/auth/register", response=UserProfileSchema, auth=None)
+def registrar_usuario(request, payload: UserRegisterSchema):
+    """
+    Registro público. Crea Usuario y Perfil (con teléfono).
+    """
+    # Validar si el correo ya existe
+    if User.objects.filter(email=payload.email).exists():
+        raise HttpError(400, "El correo electrónico ya está registrado")
+
+    try:
+        # Usamos transaction.atomic para que si falla el perfil
+        with transaction.atomic():
+            # 1. Crear el Usuario Base
+            user = User.objects.create(
+                username=payload.email,  # <--- Usamos el email como username
+                email=payload.email,
+                first_name=payload.first_name,
+                last_name=payload.last_name,
+                password=make_password(payload.password),
+            )
+
+            # 2. Crear (o actualizar) el Perfil con el Teléfono
+            # Usamos update_or_create por seguridad, aunque create bastaría.
+            PerfilUsuario.objects.update_or_create(
+                user=user, defaults={"telefono": payload.telefono}
+            )
+
+            return user
+
+    except Exception as e:
+        raise HttpError(500, f"Error al procesar el registro: {str(e)}")

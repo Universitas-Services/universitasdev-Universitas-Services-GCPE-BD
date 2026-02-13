@@ -9,3 +9,4 @@ whitenoise
 django-environ
 django-q2
 setuptools
+email-validator

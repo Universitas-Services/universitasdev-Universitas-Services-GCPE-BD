@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
-from ninja import ModelSchema
-from pydantic import field_validator
+from ninja import ModelSchema, Schema
+from pydantic import field_validator, EmailStr
 from datetime import date
 import re
 from .models import Proveedor, ComplianceExpediente, ManualConfiguracion
@@ -104,3 +104,21 @@ class UserProfileSchema(ModelSchema):
         model = User
         # Solo devolvemos datos seguros, NUNCA el password
         fields = ["username", "email"]
+
+
+class UserRegisterSchema(Schema):
+    # --- Paso 1: Credenciales ---
+    email: EmailStr
+    password: str
+    confirm_password: str
+
+    # --- Paso 2: Datos Personales ---
+    first_name: str  # Nombre
+    last_name: str  # Apellido
+    telefono: str  # Teléfono (Nuevo)
+
+    @field_validator("confirm_password")
+    def passwords_match(cls, v, info):
+        if "password" in info.data and v != info.data["password"]:
+            raise ValueError("Las contraseñas no coinciden")
+        return v
