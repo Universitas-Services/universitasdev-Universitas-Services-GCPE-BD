@@ -164,3 +164,12 @@ SIMPLE_JWT = {
     "TOKEN_USER_CLASS": "ninja_jwt.models.TokenUser",
     "JTI_CLAIM": "jti",
 }
+
+# --- CONFIGURACIÓN DE EMAIL (RESEND) ---
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.resend.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "resend"  # Siempre es 'resend'
+EMAIL_HOST_PASSWORD = env("RESEND_API_KEY")  # Lee la key del .env
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="onboarding@resend.dev")

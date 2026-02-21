@@ -122,3 +122,23 @@ class UserRegisterSchema(Schema):
         if "password" in info.data and v != info.data["password"]:
             raise ValueError("Las contraseñas no coinciden")
         return v
+
+
+# --- SCHEMAS DE RECUPERACIÓN DE CONTRASEÑA ---
+
+
+class PasswordResetRequestSchema(Schema):
+    email: EmailStr
+
+
+class PasswordResetConfirmSchema(Schema):
+    token: str
+    uidb64: str
+    new_password: str
+    confirm_password: str
+
+    @field_validator("confirm_password")
+    def passwords_match(cls, v, info):
+        if "new_password" in info.data and v != info.data["new_password"]:
+            raise ValueError("Las contraseñas no coinciden")
+        return v

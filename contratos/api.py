@@ -13,6 +13,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from ninja.errors import HttpError
 
+# Imports para recuperación de contraseña
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+import os  # Para leer el FRONTEND_URL del sistema
+
 # Importaciones locales
 from .models import Proveedor, ComplianceExpediente
 from .schemas import (
@@ -23,6 +30,7 @@ from .schemas import (
     ManualSchema,
     UserProfileSchema,
     UserRegisterSchema,
+    PasswordResetRequestSchema,  # <--- NUEVO
 )
 from .services import generar_data_para_pdf
 
@@ -168,3 +176,38 @@ def registrar_usuario(request, payload: UserRegisterSchema):
 
     except Exception as e:
         raise HttpError(500, f"Error al procesar el registro: {str(e)}")
+
+
+# --- RECUPERACIÓN DE CONTRASEÑA (Paso 1: Enviar Correo) ---
+@api.post("/auth/password-reset", auth=None)
+def request_password_reset(request, payload: PasswordResetRequestSchema):
+    """
+    Envía un correo con un link para restablecer la contraseña.
+    """
+    # 1. Buscar al usuario (Si no existe, no decimos nada por seguridad)
+    try:
+        user = User.objects.get(email=payload.email)
+    except User.DoesNotExist:
+        # Retornamos éxito falso para no revelar qué correos existen
+        return {"message": "Si el correo existe, se ha enviado un enlace."}
+
+    # 2. Generar el Token y el ID codificado
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+    # 3. Construir el Link del Frontend
+    # El link será tipo: http://localhost:3000/auth/reset-password/MjQ/bx3-12345
+    frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+    reset_link = f"{frontend_url}/auth/reset-password/{uid}/{token}"
+
+    # 4. Enviar el correo
+    asunto = "Restablecer contraseña - Universitas"
+    mensaje = f"""
+    Hola{user.first_name}, Has solicitado restablecer tu contraseña. Haz clic en el siguiente enlace: {reset_link}
+
+    Si no fuiste tú, ignora este mensaje.
+    """
+
+    send_mail(asunto, mensaje, None, [user.email], fail_silently=False)
+
+    return {"message": "Si el correo existe, se ha enviado un enlace."}
