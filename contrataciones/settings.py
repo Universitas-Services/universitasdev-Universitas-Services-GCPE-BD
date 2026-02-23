@@ -171,5 +171,7 @@ EMAIL_HOST = "smtp.resend.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "resend"  # Siempre es 'resend'
-EMAIL_HOST_PASSWORD = env("RESEND_API_KEY")  # Lee la key del .env
+EMAIL_HOST_PASSWORD = env(
+    "RESEND_API_KEY", default="dummy-key-para-tests"
+)  # Lee la key del .env
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="onboarding@resend.dev")
