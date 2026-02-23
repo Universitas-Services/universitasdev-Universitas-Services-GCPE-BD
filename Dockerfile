@@ -33,3 +33,8 @@ RUN pip install playwright
 RUN playwright install --with-deps chromium
 # Copiar el código
 COPY . /app/
+# Instalamos gunicorn si no está en tus requirements.txt
+RUN pip install gunicorn
+
+# Comando para arrancar Django usando el puerto que Google asigna ($PORT)
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 contrataciones.wsgi:application
