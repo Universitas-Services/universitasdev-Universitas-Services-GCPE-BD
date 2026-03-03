@@ -25,6 +25,11 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
+# Render inyecta esta variable automáticamente con el hostname del servicio
+RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 # Parche para que Playwright funcione (solo si estamos en modo DEBUG)
 if DEBUG:
     os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
