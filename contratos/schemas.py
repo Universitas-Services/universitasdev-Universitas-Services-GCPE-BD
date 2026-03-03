@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from ninja import ModelSchema, Schema
 from pydantic import field_validator, EmailStr
 from datetime import date
@@ -99,11 +98,31 @@ class ManualSchema(ModelSchema):
         ]
 
 
-class UserProfileSchema(ModelSchema):
-    class Meta:
-        model = User
-        # Solo devolvemos datos seguros, NUNCA el password
-        fields = ["username", "email"]
+class UserProfileSchema(Schema):
+    """Devuelve datos del usuario + su perfil extendido"""
+
+    username: str
+    email: str
+    first_name: str
+    last_name: str
+    telefono: str = None
+    nombre_institucion_ente: str = None
+    cargo: str = None
+
+    @staticmethod
+    def resolve_telefono(obj):
+        perfil = getattr(obj, "perfil", None)
+        return perfil.telefono if perfil else None
+
+    @staticmethod
+    def resolve_nombre_institucion_ente(obj):
+        perfil = getattr(obj, "perfil", None)
+        return perfil.nombre_institucion_ente if perfil else None
+
+    @staticmethod
+    def resolve_cargo(obj):
+        perfil = getattr(obj, "perfil", None)
+        return perfil.cargo if perfil else None
 
 
 class UserRegisterSchema(Schema):
@@ -120,6 +139,34 @@ class UserRegisterSchema(Schema):
     @field_validator("confirm_password")
     def passwords_match(cls, v, info):
         if "password" in info.data and v != info.data["password"]:
+            raise ValueError("Las contraseñas no coinciden")
+        return v
+
+
+# --- SCHEMAS DE GESTIÓN DE PERFIL ---
+
+
+class UpdateProfileSchema(Schema):
+    """Para actualizar datos del perfil"""
+
+    email: EmailStr = None
+    first_name: str = None
+    last_name: str = None
+    telefono: str = None
+    nombre_institucion_ente: str = None
+    cargo: str = None
+
+
+class ChangePasswordSchema(Schema):
+    """Para cambiar la contraseña"""
+
+    current_password: str
+    new_password: str
+    confirm_password: str
+
+    @field_validator("confirm_password")
+    def passwords_match(cls, v, info):
+        if "new_password" in info.data and v != info.data["new_password"]:
             raise ValueError("Las contraseñas no coinciden")
         return v
 

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "ninja",
     "ninja_extra",
     "ninja_jwt",
+    "ninja_jwt.token_blacklist",  # <--- Para invalidar tokens en logout
 ]
 
 MIDDLEWARE = [
@@ -144,8 +145,8 @@ Q_CLUSTER = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),  # <--- ¡Dura 1 día entero!
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # <--- Refresh dura 1 semana
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": False,
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,

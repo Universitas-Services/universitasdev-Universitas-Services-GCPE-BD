@@ -1,0 +1,54 @@
+from ninja import Router
+from ninja_jwt.authentication import JWTAuth
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from django.shortcuts import get_object_or_404
+from typing import List
+
+from ..models import ComplianceExpediente
+from ..schemas import ComplianceSchema, ComplianceOut
+from ..services import generar_data_para_pdf
+
+router = Router(tags=["📋 Compliance"])
+
+
+@router.post("/compliance", response=ComplianceOut, auth=JWTAuth())
+def crear_reporte_compliance(request, payload: ComplianceSchema):
+    """
+    Crea un nuevo reporte de auditoría de compliance.
+    El auditor es el usuario logueado.
+    """
+    usuario_auditor = request.auth
+    reporte = ComplianceExpediente.objects.create(
+        usuario_revisor=usuario_auditor, **payload.dict()
+    )
+    return reporte
+
+
+@router.get("/compliance", response=List[ComplianceOut], auth=JWTAuth())
+def listar_reportes_compliance(request):
+    """
+    Lista los reportes de compliance del usuario logueado.
+    """
+    return ComplianceExpediente.objects.filter(usuario_revisor=request.auth)
+
+
+@router.get("/compliance/{id}/pdf", auth=JWTAuth())
+def descargar_pdf_compliance(request, id: int):
+    """
+    Genera y descarga el reporte de hallazgos en formato PDF.
+    """
+    reporte = get_object_or_404(ComplianceExpediente, id=id)
+
+    data_context = generar_data_para_pdf(reporte)
+    html_string = render_to_string("reportes/hallazgos.html", data_context)
+    pdf_file = HTML(string=html_string).write_pdf()
+
+    response = HttpResponse(pdf_file, content_type="application/pdf")
+    nombre_archivo = f"Reporte_Hallazgos_{reporte.nomenclatura}.pdf"
+    response[
+        "Content-Disposition"
+    ] = f'attachment; filename="{nombre_archivo}"'  # noqa: E702
+
+    return response
