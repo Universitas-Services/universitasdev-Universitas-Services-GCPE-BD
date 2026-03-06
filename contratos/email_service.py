@@ -1,15 +1,16 @@
 """
 Servicio centralizado de envío de correos electrónicos.
-Maneja: activación de cuenta, reset de contraseña, y envío de documentos PDF.
+Usa la API HTTP de Resend (no SMTP, porque Render bloquea
+los puertos SMTP 25/465/587).
 """
 
 import os
-from django.core.mail import EmailMessage
+import base64
+import resend
 from django.template.loader import render_to_string
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.conf import settings
 
 
 def _get_frontend_url():
@@ -22,12 +23,23 @@ def _get_backend_url():
     return os.environ.get("BACKEND_URL", "http://localhost:8000")
 
 
+def _get_from_email():
+    """Obtiene el email remitente."""
+    return os.environ.get("DEFAULT_FROM_EMAIL", "onboarding@resend.dev")
+
+
+def _init_resend():
+    """Configura la API key de Resend."""
+    resend.api_key = os.environ.get("RESEND_API_KEY", "dummy-key")
+
+
 def enviar_correo_activacion(user):
     """
-    Envía un correo con un link para activar la cuenta del usuario.
+    Envía un correo con un link para activar la cuenta.
     El link apunta directamente al endpoint del backend.
-    Genera un token seguro usando el default_token_generator de Django.
     """
+    _init_resend()
+
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     backend_url = _get_backend_url()
@@ -41,20 +53,23 @@ def enviar_correo_activacion(user):
         },
     )
 
-    email = EmailMessage(
-        subject="Activa tu cuenta - Universitas",
-        body=html_content,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[user.email],
+    resend.Emails.send(
+        {
+            "from": _get_from_email(),
+            "to": [user.email],
+            "subject": "Activa tu cuenta - Universitas",
+            "html": html_content,
+        }
     )
-    email.content_subtype = "html"
-    email.send(fail_silently=False)
 
 
 def enviar_correo_reset_password(user, reset_link):
     """
-    Envía un correo HTML profesional con el link para restablecer la contraseña.
+    Envía un correo HTML con el link para restablecer
+    la contraseña.
     """
+    _init_resend()
+
     html_content = render_to_string(
         "emails/reset_password.html",
         {
@@ -63,28 +78,23 @@ def enviar_correo_reset_password(user, reset_link):
         },
     )
 
-    email = EmailMessage(
-        subject="Restablecer contraseña - Universitas",
-        body=html_content,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[user.email],
+    resend.Emails.send(
+        {
+            "from": _get_from_email(),
+            "to": [user.email],
+            "subject": ("Restablecer contraseña - Universitas"),
+            "html": html_content,
+        }
     )
-    email.content_subtype = "html"
-    email.send(fail_silently=False)
 
 
 def enviar_correo_con_pdf(user, asunto, mensaje_tipo, pdf_bytes, nombre_archivo):
     """
     Envía un correo con un archivo PDF adjunto.
     Usado para enviar Manual y reportes de Compliance.
-
-    Args:
-        user: Usuario destinatario
-        asunto: Asunto del correo
-        mensaje_tipo: Tipo de documento ("manual" o "compliance")
-        pdf_bytes: Bytes del PDF generado
-        nombre_archivo: Nombre del archivo adjunto (ej: "Manual_Normas_XYZ.pdf")
     """
+    _init_resend()
+
     html_content = render_to_string(
         "emails/envio_documento.html",
         {
@@ -94,12 +104,20 @@ def enviar_correo_con_pdf(user, asunto, mensaje_tipo, pdf_bytes, nombre_archivo)
         },
     )
 
-    email = EmailMessage(
-        subject=asunto,
-        body=html_content,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[user.email],
+    # Resend espera el contenido del adjunto en base64
+    pdf_b64 = base64.b64encode(pdf_bytes).decode("utf-8")
+
+    resend.Emails.send(
+        {
+            "from": _get_from_email(),
+            "to": [user.email],
+            "subject": asunto,
+            "html": html_content,
+            "attachments": [
+                {
+                    "filename": nombre_archivo,
+                    "content": pdf_b64,
+                }
+            ],
+        }
     )
-    email.content_subtype = "html"
-    email.attach(nombre_archivo, pdf_bytes, "application/pdf")
-    email.send(fail_silently=False)
