@@ -164,7 +164,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
-    "USER_AUTHENTICATION_RULE": "ninja_jwt.authentication.default_user_authentication_rule",
+    "USER_AUTHENTICATION_RULE": "contratos.auth_rules.user_authentication_rule",
     "AUTH_TOKEN_CLASSES": ("ninja_jwt.tokens.AccessToken",),
     "TOKEN_TYPE_CLAIM": "token_type",
     "TOKEN_USER_CLASS": "ninja_jwt.models.TokenUser",

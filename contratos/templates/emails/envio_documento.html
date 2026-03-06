@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documento adjunto</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:'Segoe UI',Roboto,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f9;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);">
+          <!-- Header -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#1a237e,#3949ab);padding:40px 40px 30px;text-align:center;">
+              <h1 style="color:#ffffff;margin:0;font-size:28px;font-weight:700;letter-spacing:-0.5px;">Universitas</h1>
+              <p style="color:rgba(255,255,255,0.85);margin:8px 0 0;font-size:14px;">Sistema de Gestión de Contrataciones Públicas</p>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px;">
+              <h2 style="color:#1a237e;margin:0 0 16px;font-size:22px;">Documento generado</h2>
+              <p style="color:#4a5568;font-size:15px;line-height:1.7;margin:0 0 8px;">
+                Hola <strong>{{ nombre }}</strong>,
+              </p>
+              <p style="color:#4a5568;font-size:15px;line-height:1.7;margin:0 0 24px;">
+                Te enviamos adjunto el documento <strong>{{ tipo_documento }}</strong> que generaste desde el sistema.
+              </p>
+              <!-- File info box -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background-color:#f7fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="48" valign="top">
+                          <div style="background:linear-gradient(135deg,#e53935,#c62828);width:44px;height:44px;border-radius:8px;text-align:center;line-height:44px;color:#ffffff;font-size:14px;font-weight:700;">
+                            PDF
+                          </div>
+                        </td>
+                        <td style="padding-left:16px;">
+                          <p style="color:#2d3748;font-size:15px;font-weight:600;margin:0 0 4px;">{{ nombre_archivo }}</p>
+                          <p style="color:#718096;font-size:13px;margin:0;">Archivo adjunto en este correo</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              <hr style="border:none;border-top:1px solid #e2e8f0;margin:28px 0 20px;">
+              <p style="color:#a0aec0;font-size:12px;line-height:1.5;margin:0;">
+                Este documento fue generado automáticamente por el sistema Universitas. Si no solicitaste este documento, puedes ignorar este correo.
+              </p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="background-color:#f7fafc;padding:24px 40px;text-align:center;border-top:1px solid #e2e8f0;">
+              <p style="color:#a0aec0;font-size:12px;margin:0;">
+                &copy; 2026 Universitas Legal. Todos los derechos reservados.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
