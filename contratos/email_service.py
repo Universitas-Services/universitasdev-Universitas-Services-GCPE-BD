@@ -15,7 +15,9 @@ from django.utils.encoding import force_bytes
 
 def _get_frontend_url():
     """Obtiene la URL del frontend desde las variables de entorno."""
-    return os.environ.get("FRONTEND_URL", "http://localhost:3000")
+    return os.environ.get(
+        "FRONTEND_URL", "https://universitas-services-gcpe-hd31lcjin.vercel.app"
+    )
 
 
 def _get_backend_url():

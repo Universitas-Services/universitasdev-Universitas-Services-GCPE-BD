@@ -68,7 +68,9 @@ def activar_cuenta(request, uidb64: str, token: str):
     Activa la cuenta del usuario usando el link enviado por correo.
     Al activar exitosamente, redirige al login del frontend.
     """
-    frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+    frontend_url = os.environ.get(
+        "FRONTEND_URL", "https://universitas-services-gcpe-hd31lcjin.vercel.app"
+    )
 
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
@@ -78,7 +80,7 @@ def activar_cuenta(request, uidb64: str, token: str):
 
     if user.is_active:
         # Ya estaba activada, redirigir al login
-        return HttpResponseRedirect(f"{frontend_url}/auth/login?activated=already")
+        return HttpResponseRedirect(f"{frontend_url}/login?activated=already")
 
     if not default_token_generator.check_token(user, token):
         raise HttpError(400, "El link de activación ha expirado o es inválido")
@@ -87,7 +89,7 @@ def activar_cuenta(request, uidb64: str, token: str):
     user.save()
 
     # Redirigir al login del frontend con parámetro de éxito
-    return HttpResponseRedirect(f"{frontend_url}/auth/login?activated=true")
+    return HttpResponseRedirect(f"{frontend_url}/login?activated=true")
 
 
 # --- REENVIAR CORREO DE ACTIVACIÓN ---
