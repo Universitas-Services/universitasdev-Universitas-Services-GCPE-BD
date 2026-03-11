@@ -1,6 +1,8 @@
 from ninja import ModelSchema, Schema
 from pydantic import field_validator, EmailStr
 from datetime import date
+from decimal import Decimal, InvalidOperation
+from typing import List
 import re
 from .models import Proveedor, ComplianceExpediente, ManualConfiguracion
 
@@ -64,6 +66,26 @@ class ProveedorSchema(ModelSchema):
             raise ValueError(f'Nivel inválido. Opciones: {", ".join(niveles_validos)}')
         return v.upper()
 
+    @field_validator("patrimonio_reportado", mode="before", check_fields=False)
+    def validar_patrimonio(cls, v):
+        if v is None or v == "":
+            return 0
+        v_str = str(v).strip()
+        # Si tiene coma, la tratamos como separador decimal
+        # Ej: "1500000,50" -> "1500000.50"
+        v_str = v_str.replace(",", ".")
+        try:
+            valor = Decimal(v_str)
+            if valor < 0:
+                raise ValueError("El patrimonio no puede ser negativo.")
+            return valor
+        except (InvalidOperation, ValueError) as e:
+            if "negativo" in str(e):
+                raise
+            raise ValueError(
+                "Formato de patrimonio inválido. Use números con . o , para decimales."
+            )
+
 
 # NUEVO: Esquema solo para SALIDA (Listar)
 class ProveedorOut(ModelSchema):
@@ -72,6 +94,15 @@ class ProveedorOut(ModelSchema):
         fields = "__all__"
         # Quitamos los validadores porque al leer de la BD no queremos que falle
         # si un dato antiguo está "feo".
+
+
+# Esquema de respuesta paginada para listar proveedores
+class ProveedorPaginadoOut(Schema):
+    items: List[ProveedorOut]
+    total: int
+    page: int
+    page_size: int
+    pages: int
 
 
 # ... (El resto de clases ComplianceSchema, etc. igual)
@@ -155,6 +186,16 @@ class UpdateProfileSchema(Schema):
     telefono: str = None
     nombre_institucion_ente: str = None
     cargo: str = None
+
+    @field_validator("telefono", check_fields=False)
+    def validar_telefono(cls, v):
+        if v is None:
+            return v
+        if not v.isdigit():
+            raise ValueError("El teléfono debe contener solo números.")
+        if len(v) not in [10, 11]:
+            raise ValueError("El teléfono debe tener 10 u 11 dígitos.")
+        return v
 
 
 class ChangePasswordSchema(Schema):
