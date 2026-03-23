@@ -1,7 +1,13 @@
 # Register your models here.
 
 from django.contrib import admin
-from .models import PerfilUsuario, ManualConfiguracion, Proveedor, ComplianceExpediente
+from .models import (
+    PerfilUsuario,
+    ManualConfiguracion,
+    Proveedor,
+    ComplianceExpediente,
+    CodigoResetPassword,
+)
 
 
 # 1. Configuración para el Perfil de Usuario
@@ -45,3 +51,11 @@ class ComplianceExpedienteAdmin(admin.ModelAdmin):
     )
     search_fields = ("nomenclatura", "nombre_organo_entidad")
     list_filter = ("fecha_revision",)
+
+
+# 5. Configuración para Códigos OTP de Reset de Contraseña
+@admin.register(CodigoResetPassword)
+class CodigoResetPasswordAdmin(admin.ModelAdmin):
+    list_display = ("user", "codigo", "creado_en", "usado")
+    search_fields = ("user__email", "codigo")
+    list_filter = ("usado", "creado_en")

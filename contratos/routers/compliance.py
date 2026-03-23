@@ -2,7 +2,6 @@ from ninja import Router
 from ninja_jwt.authentication import JWTAuth
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from weasyprint import HTML
 from django.shortcuts import get_object_or_404
 from typing import List
 
@@ -40,6 +39,8 @@ def descargar_pdf_compliance(request, id: int):
     """
     Genera y descarga el reporte de hallazgos en formato PDF.
     """
+    from weasyprint import HTML
+
     reporte = get_object_or_404(ComplianceExpediente, id=id)
 
     data_context = generar_data_para_pdf(reporte)
@@ -61,6 +62,8 @@ def enviar_compliance_por_email(request, id: int):
     Genera el PDF del reporte de compliance y lo envía por correo
     al email del usuario logueado.
     """
+    from weasyprint import HTML
+
     reporte = get_object_or_404(
         ComplianceExpediente, id=id, usuario_revisor=request.auth
     )

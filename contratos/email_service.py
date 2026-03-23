@@ -65,18 +65,18 @@ def enviar_correo_activacion(user):
     )
 
 
-def enviar_correo_reset_password(user, reset_link):
+def enviar_correo_codigo_reset(user, codigo):
     """
-    Envía un correo HTML con el link para restablecer
-    la contraseña.
+    Envía un correo HTML con el código OTP de 6 dígitos
+    para restablecer la contraseña.
     """
     _init_resend()
 
     html_content = render_to_string(
-        "emails/reset_password.html",
+        "emails/reset_password_otp.html",
         {
             "nombre": user.first_name or user.email,
-            "reset_link": reset_link,
+            "codigo": codigo,
         },
     )
 
@@ -84,7 +84,7 @@ def enviar_correo_reset_password(user, reset_link):
         {
             "from": _get_from_email(),
             "to": [user.email],
-            "subject": ("Restablecer contraseña - Universitas"),
+            "subject": "Código de verificación - Universitas",
             "html": html_content,
         }
     )

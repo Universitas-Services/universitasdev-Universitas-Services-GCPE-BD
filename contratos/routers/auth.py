@@ -1,3 +1,6 @@
+import random
+import uuid
+
 from ninja import Router
 from ninja_jwt.authentication import JWTAuth
 from ninja.errors import HttpError
@@ -5,20 +8,25 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode
+from django.utils import timezone
 from django.http import HttpResponseRedirect
+from datetime import timedelta
 import os
 
-from ..models import PerfilUsuario
+from ..models import PerfilUsuario, CodigoResetPassword
 from ..schemas import (
     UserRegisterSchema,
     PasswordResetRequestSchema,
-    PasswordResetConfirmSchema,
+    VerificarCodigoResetSchema,
+    ResetPasswordConTokenSchema,
 )
-from ..email_service import enviar_correo_activacion, enviar_correo_reset_password
+from ..email_service import enviar_correo_activacion, enviar_correo_codigo_reset
 
 router = Router(tags=["🔐 Autenticación"])
+
+# Tiempo de expiración del código OTP (5 minutos)
+OTP_EXPIRACION_MINUTOS = 5
 
 
 # --- REGISTRO (con activación por correo) ---
@@ -115,48 +123,114 @@ def reenviar_activacion(request, payload: PasswordResetRequestSchema):
     }
 
 
-# --- RECUPERACIÓN DE CONTRASEÑA (Paso 1: Enviar Correo HTML) ---
+# ==============================================================================
+# RECUPERACIÓN DE CONTRASEÑA CON OTP (3 PASOS)
+# ==============================================================================
+
+
+# --- PASO 1: Enviar código OTP al correo ---
 @router.post("/auth/password-reset", auth=None)
-def request_password_reset(request, payload: PasswordResetRequestSchema):
+def enviar_codigo_reset(request, payload: PasswordResetRequestSchema):
     """
-    Envía un correo HTML profesional con un link para restablecer la contraseña.
+    Paso 1: Envía un código OTP de 6 dígitos al correo del usuario.
+    Si el correo no existe, responde igual (por seguridad).
+    Invalida cualquier código OTP anterior del mismo usuario.
     """
     try:
         user = User.objects.get(email=payload.email)
     except User.DoesNotExist:
-        return {"message": "Si el correo existe, se ha enviado un enlace."}
+        # No revelamos si el email existe o no
+        return {
+            "message": "Si el correo existe, se ha enviado un código de verificación."
+        }
 
-    token = default_token_generator.make_token(user)
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    # Invalidar códigos OTP anteriores de este usuario
+    CodigoResetPassword.objects.filter(user=user, usado=False).update(usado=True)
 
-    frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
-    reset_link = f"{frontend_url}/auth/reset-password/{uid}/{token}"
+    # Generar código OTP de 6 dígitos
+    codigo = str(random.randint(100000, 999999))
 
-    # Usar el servicio de email con plantilla HTML
-    enviar_correo_reset_password(user, reset_link)
+    # Guardar en BD
+    CodigoResetPassword.objects.create(user=user, codigo=codigo)
 
-    return {"message": "Si el correo existe, se ha enviado un enlace."}
+    # Enviar correo con el código
+    enviar_correo_codigo_reset(user, codigo)
+
+    return {"message": "Si el correo existe, se ha enviado un código de verificación."}
 
 
-# --- RECUPERACIÓN DE CONTRASEÑA (Paso 2: Confirmar y Cambiar) ---
-@router.post("/auth/password-reset-confirm", auth=None)
-def confirm_password_reset(request, payload: PasswordResetConfirmSchema):
+# --- PASO 2: Verificar código OTP ---
+@router.post("/auth/verify-reset-code", auth=None)
+def verificar_codigo_reset(request, payload: VerificarCodigoResetSchema):
     """
-    Valida el token del correo y cambia la contraseña.
-    El frontend envía: uidb64, token, new_password, confirm_password.
+    Paso 2: Verifica que el código OTP sea correcto y no haya expirado.
+    Si es válido, genera un reset_token (UUID) que se usará en el paso 3.
     """
     try:
-        uid = urlsafe_base64_decode(payload.uidb64).decode()
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, User.DoesNotExist):
-        raise HttpError(400, "Link inválido o expirado")
+        user = User.objects.get(email=payload.email)
+    except User.DoesNotExist:
+        raise HttpError(400, "Código inválido o expirado.")
 
-    if not default_token_generator.check_token(user, payload.token):
-        raise HttpError(400, "Token inválido o expirado")
+    # Buscar el último código OTP no usado para este usuario
+    registro_otp = CodigoResetPassword.objects.filter(user=user, usado=False).first()
 
+    if not registro_otp:
+        raise HttpError(400, "Código inválido o expirado.")
+
+    # Verificar que no haya expirado (10 minutos)
+    tiempo_limite = registro_otp.creado_en + timedelta(minutes=OTP_EXPIRACION_MINUTOS)
+    if timezone.now() > tiempo_limite:
+        registro_otp.usado = True
+        registro_otp.save()
+        raise HttpError(400, "El código ha expirado. Solicita uno nuevo.")
+
+    # Verificar que el código coincida
+    if registro_otp.codigo != payload.codigo:
+        raise HttpError(400, "Código inválido o expirado.")
+
+    # Generar reset_token (UUID) para autorizar el cambio de contraseña
+    reset_token = str(uuid.uuid4())
+    registro_otp.token_reset = reset_token
+    registro_otp.save()
+
+    return {
+        "reset_token": reset_token,
+        "message": "Código verificado correctamente.",
+    }
+
+
+# --- PASO 3: Cambiar contraseña con reset_token ---
+@router.post("/auth/reset-password", auth=None)
+def resetear_password(request, payload: ResetPasswordConTokenSchema):
+    """
+    Paso 3: Cambia la contraseña del usuario usando el reset_token
+    obtenido en el paso 2. El token se invalida después de usarse.
+    """
+    # Buscar el registro OTP por reset_token, que no esté usado
+    registro_otp = CodigoResetPassword.objects.filter(
+        token_reset=payload.reset_token, usado=False
+    ).first()
+
+    if not registro_otp:
+        raise HttpError(400, "Token inválido o expirado.")
+
+    # Verificar que no haya expirado
+    tiempo_limite = registro_otp.creado_en + timedelta(minutes=OTP_EXPIRACION_MINUTOS)
+    if timezone.now() > tiempo_limite:
+        registro_otp.usado = True
+        registro_otp.save()
+        raise HttpError(400, "El token ha expirado. Solicita un nuevo código.")
+
+    # Cambiar la contraseña
+    user = registro_otp.user
     user.set_password(payload.new_password)
     user.save()
-    return {"message": "Contraseña actualizada exitosamente"}
+
+    # Marcar el código como usado
+    registro_otp.usado = True
+    registro_otp.save()
+
+    return {"message": "Contraseña actualizada exitosamente."}
 
 
 # --- LOGOUT (Invalidar Token) ---

@@ -219,9 +219,17 @@ class PasswordResetRequestSchema(Schema):
     email: EmailStr
 
 
-class PasswordResetConfirmSchema(Schema):
-    token: str
-    uidb64: str
+class VerificarCodigoResetSchema(Schema):
+    """Paso 2: Verificar el código OTP enviado al correo"""
+
+    email: EmailStr
+    codigo: str
+
+
+class ResetPasswordConTokenSchema(Schema):
+    """Paso 3: Cambiar la contraseña usando el reset_token del paso 2"""
+
+    reset_token: str
     new_password: str
     confirm_password: str
 

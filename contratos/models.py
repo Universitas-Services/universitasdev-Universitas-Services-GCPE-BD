@@ -180,3 +180,20 @@ class ComplianceExpediente(models.Model):
 
     def __str__(self):
         return f"Auditoría {self.nomenclatura}"
+
+
+# ==============================================================================
+# 5. CÓDIGO OTP PARA RESET DE CONTRASEÑA
+# ==============================================================================
+class CodigoResetPassword(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    codigo = models.CharField(max_length=6)
+    token_reset = models.CharField(max_length=64, blank=True, null=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    usado = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-creado_en"]
+
+    def __str__(self):
+        return f"OTP {self.codigo} - {self.user.email}"

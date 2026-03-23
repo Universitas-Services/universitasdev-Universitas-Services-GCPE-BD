@@ -2,7 +2,6 @@ from ninja import Router
 from ninja_jwt.authentication import JWTAuth
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from weasyprint import HTML
 
 from ..schemas import ManualSchema
 from ..email_service import enviar_correo_con_pdf
@@ -16,6 +15,8 @@ def generar_manual_pdf(request, payload: ManualSchema):
     Recibe los 4 datos de configuración y genera el Manual en PDF.
     No guarda en BD, solo genera el documento al vuelo.
     """
+    from weasyprint import HTML
+
     data_context = payload.dict()
 
     html_string = render_to_string(
@@ -40,6 +41,8 @@ def enviar_manual_por_email(request, payload: ManualSchema):
     al email del usuario logueado.
     """
     data_context = payload.dict()
+
+    from weasyprint import HTML
 
     html_string = render_to_string(
         "reportes/manual_concurso_abierto.html", data_context
