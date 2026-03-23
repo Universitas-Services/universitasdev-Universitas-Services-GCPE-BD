@@ -90,12 +90,17 @@ def enviar_correo_codigo_reset(user, codigo):
     )
 
 
-def enviar_correo_con_pdf(user, asunto, mensaje_tipo, pdf_bytes, nombre_archivo):
+def enviar_correo_con_pdf(
+    user, asunto, mensaje_tipo, pdf_bytes, nombre_archivo, destinatario_email=None
+):
     """
     Envía un correo con un archivo PDF adjunto.
     Usado para enviar Manual y reportes de Compliance.
+    Si se pasa destinatario_email, se envía a ese correo en vez del usuario.
     """
     _init_resend()
+
+    email_destino = destinatario_email or user.email
 
     html_content = render_to_string(
         "emails/envio_documento.html",
@@ -112,7 +117,7 @@ def enviar_correo_con_pdf(user, asunto, mensaje_tipo, pdf_bytes, nombre_archivo)
     resend.Emails.send(
         {
             "from": _get_from_email(),
-            "to": [user.email],
+            "to": [email_destino],
             "subject": asunto,
             "html": html_content,
             "attachments": [

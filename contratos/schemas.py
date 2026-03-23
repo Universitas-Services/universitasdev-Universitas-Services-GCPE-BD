@@ -126,6 +126,7 @@ class ManualSchema(ModelSchema):
             "siglas_institucion_ente",
             "nombre_unidad_admin_financiera",
             "nombre_unidad_sistemas_tecnologia",
+            "correo_electronico_manual",
         ]
 
 

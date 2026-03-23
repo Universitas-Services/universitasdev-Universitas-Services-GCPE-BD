@@ -38,7 +38,7 @@ def generar_manual_pdf(request, payload: ManualSchema):
 def enviar_manual_por_email(request, payload: ManualSchema):
     """
     Genera el Manual en PDF y lo envía por correo electrónico
-    al email del usuario logueado.
+    al correo indicado por el usuario en el formulario.
     """
     data_context = payload.dict()
 
@@ -57,6 +57,9 @@ def enviar_manual_por_email(request, payload: ManualSchema):
         mensaje_tipo="Manual de Normas de Contrataciones",
         pdf_bytes=pdf_bytes,
         nombre_archivo=nombre_archivo,
+        destinatario_email=payload.correo_electronico_manual,
     )
 
-    return {"message": f"El manual ha sido enviado a {request.auth.email}"}
+    return {
+        "message": (f"El manual ha sido enviado a {payload.correo_electronico_manual}")
+    }

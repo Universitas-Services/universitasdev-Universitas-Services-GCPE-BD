@@ -26,6 +26,9 @@ class ManualConfiguracion(models.Model):
     siglas_institucion_ente = models.CharField(max_length=50)
     nombre_unidad_admin_financiera = models.CharField(max_length=255)
     nombre_unidad_sistemas_tecnologia = models.CharField(max_length=255)
+    correo_electronico_manual = models.EmailField(
+        max_length=50, verbose_name="Correo destino del manual"
+    )
 
     def __str__(self):
         return self.siglas_institucion_ente
@@ -64,7 +67,9 @@ class Proveedor(models.Model):
     tiene_licencia_municipal = models.BooleanField(default=False)
 
     # Capacidad
-    actividad_comercial_principal = models.BooleanField(default=False)
+    actividad_comercial_principal = models.CharField(
+        max_length=255, blank=True, default=""
+    )
     AREA_CHOICES = [("Bienes", "Bienes"), ("Obras", "Obras"), ("Servicio", "Servicio")]
     area_especialidad = models.CharField(max_length=50, choices=AREA_CHOICES)
     anos_experiencia = models.PositiveIntegerField(default=0)
