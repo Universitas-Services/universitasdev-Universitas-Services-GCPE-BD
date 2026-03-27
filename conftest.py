@@ -16,7 +16,10 @@ def pytest_configure(config):
         "OPTIONS": {},
         "PASSWORD": "",
         "PORT": "",
-        "TEST": {"NAME": ":memory:"},
+        "TEST": {"NAME": ":memory:", "MIRROR": None},
         "TIME_ZONE": None,
         "USER": "",
     }
+
+    # Evitar envío real de emails en tests
+    settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"

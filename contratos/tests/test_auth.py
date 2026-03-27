@@ -7,6 +7,7 @@ Tests para el módulo de autenticación:
 
 import json
 import pytest
+from unittest.mock import patch
 from django.contrib.auth.models import User
 from contratos.models import PerfilUsuario
 
@@ -17,7 +18,8 @@ pytestmark = pytest.mark.django_db
 class TestRegistro:
     """Tests para POST /api/auth/register"""
 
-    def test_registro_exitoso(self, client):
+    @patch("contratos.email_service.resend.Emails.send")
+    def test_registro_exitoso(self, mock_email, client):
         """El registro crea un usuario inactivo con perfil."""
         payload = {
             "email": "nuevo@test.com",
@@ -42,6 +44,9 @@ class TestRegistro:
         # Verificar que se creó el perfil
         perfil = PerfilUsuario.objects.get(user=user)
         assert perfil.telefono == "04141234567"
+
+        # Verificar que se intentó enviar el correo
+        assert mock_email.called
 
     def test_registro_email_duplicado(self, client, usuario):
         """No se puede registrar con un email que ya existe."""
