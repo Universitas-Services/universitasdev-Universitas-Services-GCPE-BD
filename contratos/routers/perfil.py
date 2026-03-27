@@ -97,20 +97,15 @@ def cambiar_contrasena(request, payload: ChangePasswordSchema):
     return {"message": "Contraseña actualizada exitosamente"}
 
 
-# --- ELIMINAR CUENTA ---
+# --- ELIMINAR CUENTA (Soft Delete) ---
 @router.delete("/auth/delete-account", auth=JWTAuth())
 def eliminar_cuenta(request):
     """
-    Elimina la cuenta del usuario logueado.
-    Si tiene proveedores o reportes asociados (PROTECT), no se podrá eliminar.
+    Desactiva la cuenta del usuario logueado (soft delete).
+    No borra datos de la base de datos, solo marca is_active=False.
+    El usuario no podrá iniciar sesión nuevamente.
     """
     user = request.auth
-    try:
-        user.delete()
-        return {"message": "Cuenta eliminada exitosamente"}
-    except Exception:
-        raise HttpError(
-            400,
-            "No se puede eliminar la cuenta porque tiene datos asociados "
-            "(proveedores o reportes de compliance). Elimine esos registros primero.",
-        )
+    user.is_active = False
+    user.save()
+    return {"message": "Cuenta desactivada exitosamente"}

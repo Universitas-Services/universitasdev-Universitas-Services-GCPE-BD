@@ -39,9 +39,11 @@ def descargar_pdf_compliance(request, id: int):
     """
     Genera y descarga el reporte de hallazgos en formato PDF.
     """
-    from weasyprint import HTML
+    reporte = get_object_or_404(
+        ComplianceExpediente, id=id, usuario_revisor=request.auth
+    )
 
-    reporte = get_object_or_404(ComplianceExpediente, id=id)
+    from weasyprint import HTML
 
     data_context = generar_data_para_pdf(reporte)
     html_string = render_to_string("reportes/hallazgos.html", data_context)
@@ -62,11 +64,11 @@ def enviar_compliance_por_email(request, id: int):
     Genera el PDF del reporte de compliance y lo envía por correo
     al email del usuario logueado.
     """
-    from weasyprint import HTML
-
     reporte = get_object_or_404(
         ComplianceExpediente, id=id, usuario_revisor=request.auth
     )
+
+    from weasyprint import HTML
 
     # Generar el PDF (misma lógica que descargar_pdf_compliance)
     data_context = generar_data_para_pdf(reporte)

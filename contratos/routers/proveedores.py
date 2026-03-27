@@ -2,6 +2,7 @@ import math
 from ninja import Router
 from ninja_jwt.authentication import JWTAuth
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 from ..models import Proveedor
 from ..schemas import ProveedorSchema, ProveedorPaginadoOut
@@ -27,7 +28,7 @@ def listar_proveedores(request, q: str = None, page: int = 1, page_size: int = 1
     - **page**: Número de página (default: 1).
     - **page_size**: Cantidad por página (default: 10).
     """
-    queryset = Proveedor.objects.filter(creado_por=request.auth)
+    queryset = Proveedor.objects.filter(creado_por=request.auth, activo=True)
 
     # Búsqueda por nombre, RIF o área de especialidad
     if q:
@@ -53,3 +54,17 @@ def listar_proveedores(request, q: str = None, page: int = 1, page_size: int = 1
         "page_size": page_size,
         "pages": pages,
     }
+
+
+@router.delete("/proveedores/{id}", auth=JWTAuth())
+def eliminar_proveedor(request, id: int):
+    """
+    Soft delete: marca el proveedor como inactivo.
+    Solo el usuario que lo creó puede eliminarlo.
+    """
+    proveedor = get_object_or_404(
+        Proveedor, id=id, creado_por=request.auth, activo=True
+    )
+    proveedor.activo = False
+    proveedor.save()
+    return {"message": "Proveedor eliminado exitosamente"}

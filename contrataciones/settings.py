@@ -148,7 +148,7 @@ Q_CLUSTER = {
 # --- CONFIGURACIÓN DE JWT (Tokens) ---
 # Esto define cuánto dura la sesión de tu compañero
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),  # <--- ¡Dura 1 día entero!
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),  # <--- Dura 1 hora
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # <--- Refresh dura 1 semana
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,

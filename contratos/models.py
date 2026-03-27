@@ -81,6 +81,9 @@ class Proveedor(models.Model):
     NIVEL_CHOICES = [("ALTA", "Alta"), ("MEDIA", "Media"), ("BAJA", "Baja")]
     nivel_contratacion = models.CharField(max_length=10, choices=NIVEL_CHOICES)
 
+    # Soft delete
+    activo = models.BooleanField(default=True)
+
     def __str__(self):
         return f"{self.nombre_proveedor} ({self.rif_proveedor})"
 
