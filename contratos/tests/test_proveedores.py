@@ -61,6 +61,31 @@ class TestCrearProveedor:
         )
         assert response.status_code == 422
 
+    def test_crear_proveedor_rif_duplicado(self, client, usuario):
+        """No se puede registrar el mismo RIF dos veces para un usuario."""
+        token, _ = obtener_tokens(client)
+
+        # Primer registro exitoso
+        client.post(
+            "/api/proveedores",
+            data=json.dumps(PROVEEDOR_VALIDO),
+            content_type="application/json",
+            HTTP_AUTHORIZATION=f"Bearer {token}",
+        )
+
+        # Segundo intento con el mismo RIF falla
+        response = client.post(
+            "/api/proveedores",
+            data=json.dumps(PROVEEDOR_VALIDO),
+            content_type="application/json",
+            HTTP_AUTHORIZATION=f"Bearer {token}",
+        )
+        assert response.status_code == 400
+        assert (
+            "Ya tienes registrado un proveedor con este RIF"
+            in response.json()["detail"]
+        )
+
     def test_patrimonio_con_coma(self, client, usuario):
         """El patrimonio acepta comas como separador decimal."""
         token, _ = obtener_tokens(client)

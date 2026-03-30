@@ -16,6 +16,15 @@ def crear_proveedor(request, payload: ProveedorSchema):
     Crea un nuevo proveedor asociado al usuario logueado.
     """
     usuario_actual = request.auth
+
+    # Validar que el usuario no registre el mismo RIF dos veces
+    if Proveedor.objects.filter(
+        creado_por=usuario_actual, rif_proveedor=payload.rif_proveedor, activo=True
+    ).exists():
+        from ninja.errors import HttpError
+
+        raise HttpError(400, "Ya tienes registrado un proveedor con este RIF.")
+
     proveedor = Proveedor.objects.create(creado_por=usuario_actual, **payload.dict())
     return {"id": proveedor.id, "mensaje": "Proveedor creado exitosamente"}
 
