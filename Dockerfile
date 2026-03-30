@@ -35,7 +35,9 @@ RUN playwright install --with-deps chromium
 COPY . /app/
 
 # Recopilar archivos estáticos (necesario para Swagger UI y WhiteNoise)
-RUN python manage.py collectstatic --noinput || true
+# Usamos una SECRET_KEY temporal porque Django la requiere para cualquier comando manage.py
+# La key real se inyecta en runtime vía variables de entorno de Render
+RUN SECRET_KEY=temp-build-key DATABASE_URL=sqlite:///tmp.db python manage.py collectstatic --noinput
 
 # Comando de arranque para Render usando Gunicorn y auto-correr migraciones
 CMD sh -c "python manage.py migrate && gunicorn contrataciones.wsgi:application --bind 0.0.0.0:$PORT"
