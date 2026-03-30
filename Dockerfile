@@ -34,5 +34,8 @@ RUN playwright install --with-deps chromium
 # Copiar el código
 COPY . /app/
 
+# Recopilar archivos estáticos (necesario para Swagger UI y WhiteNoise)
+RUN python manage.py collectstatic --noinput || true
+
 # Comando de arranque para Render usando Gunicorn y auto-correr migraciones
 CMD sh -c "python manage.py migrate && gunicorn contrataciones.wsgi:application --bind 0.0.0.0:$PORT"
