@@ -83,6 +83,7 @@ def enviar_compliance_por_email(request, id: int):
         mensaje_tipo="Reporte de Compliance (Hallazgos)",
         pdf_bytes=pdf_bytes,
         nombre_archivo=nombre_archivo,
+        destinatario_email=reporte.persona_contacto,
     )
 
-    return {"message": f"El reporte ha sido enviado a {request.auth.email}"}
+    return {"message": f"El reporte ha sido enviado a {reporte.persona_contacto}"}
