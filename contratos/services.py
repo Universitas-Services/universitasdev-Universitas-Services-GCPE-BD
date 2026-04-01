@@ -227,9 +227,37 @@ def generar_data_para_pdf(reporte: ComplianceExpediente):
 
         lista_detalles.append(item)
 
+    # Formatear fecha en español
+    fecha_revision_es = _formatear_fecha_es(reporte.fecha_revision)
+
     return {
         "detalles": lista_detalles,
         "total_puntos": total_puntos,
         "maximos_posibles": maximos_posibles,
         "reporte": reporte,  # Pasamos el objeto original para sacar nombre, fecha, etc.
+        "fecha_revision_es": fecha_revision_es,
     }
+
+
+# Mapa de meses en español
+_MESES_ES = {
+    1: "enero",
+    2: "febrero",
+    3: "marzo",
+    4: "abril",
+    5: "mayo",
+    6: "junio",
+    7: "julio",
+    8: "agosto",
+    9: "septiembre",
+    10: "octubre",
+    11: "noviembre",
+    12: "diciembre",
+}
+
+
+def _formatear_fecha_es(fecha):
+    """Convierte una fecha a formato '31 de marzo de 2026'."""
+    if fecha is None:
+        return ""
+    return f"{fecha.day} de {_MESES_ES.get(fecha.month, '')} de {fecha.year}"
