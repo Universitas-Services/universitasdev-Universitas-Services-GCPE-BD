@@ -1,14 +1,13 @@
 """
 Tests para el módulo de compliance:
-- Crear reporte
-- Listar reportes (solo del usuario)
-- Verificación de ownership en descarga de PDF
+- Generar PDF al vuelo
+- Enviar reporte por email
 """
 
 import json
 import pytest
+from unittest.mock import patch
 
-from contratos.models import ComplianceExpediente
 from .conftest import obtener_tokens
 
 
@@ -19,7 +18,7 @@ COMPLIANCE_VALIDO = {
     "nombre_unidad_revisora": "Unidad Revisora Test",
     "nomenclatura": "AUD-2026-001",
     "fecha_revision": "2026-03-15",
-    "persona_contacto": "María García",
+    "persona_contacto": "test@correo.com",
     "nombre_completo_revisor": "Pedro López",
     "caaue1_incluye_actividades_previas": "SI",
     "caaue2_incluye_acta_inicio": "SI",
@@ -48,78 +47,60 @@ COMPLIANCE_VALIDO = {
 }
 
 
-class TestCrearCompliance:
-    """Tests para POST /api/compliance"""
+class TestGenerarCompliancePDF:
+    """Tests para POST /api/compliance/pdf"""
 
-    def test_crear_reporte_exitoso(self, client, usuario):
-        """Se puede crear un reporte de compliance con datos válidos."""
+    def test_generar_pdf_exitoso(self, client, usuario):
+        """Se puede generar un PDF de compliance al vuelo."""
         token, _ = obtener_tokens(client)
-        response = client.post(
-            "/api/compliance",
-            data=json.dumps(COMPLIANCE_VALIDO),
-            content_type="application/json",
-            HTTP_AUTHORIZATION=f"Bearer {token}",
-        )
-        assert response.status_code == 200
-        assert ComplianceExpediente.objects.filter(usuario_revisor=usuario).count() == 1
-
-
-class TestListarCompliance:
-    """Tests para GET /api/compliance"""
-
-    def test_listar_solo_propios(self, client, usuario, usuario_b):
-        """Cada usuario solo ve sus propios reportes."""
-        ComplianceExpediente.objects.create(
-            usuario_revisor=usuario, **COMPLIANCE_VALIDO
-        )
-        ComplianceExpediente.objects.create(
-            usuario_revisor=usuario_b,
-            **{**COMPLIANCE_VALIDO, "nomenclatura": "AUD-2026-002"},
-        )
-
-        token, _ = obtener_tokens(client)
-        response = client.get(
-            "/api/compliance",
-            HTTP_AUTHORIZATION=f"Bearer {token}",
-        )
-        data = response.json()
-        assert len(data) == 1  # Solo ve 1, no 2
-
-
-class TestOwnershipCompliance:
-    """Tests para verificación de ownership en descarga de PDF"""
-
-    def test_no_puede_descargar_pdf_ajeno(self, client, usuario, usuario_b):
-        """Un usuario no puede descargar el PDF de un reporte de otro usuario."""
-        reporte = ComplianceExpediente.objects.create(
-            usuario_revisor=usuario_b, **COMPLIANCE_VALIDO
-        )
-        token, _ = obtener_tokens(client)  # Token de usuario A
         try:
-            response = client.get(
-                f"/api/compliance/{reporte.id}/pdf",
+            response = client.post(
+                "/api/compliance/pdf",
+                data=json.dumps(COMPLIANCE_VALIDO),
+                content_type="application/json",
                 HTTP_AUTHORIZATION=f"Bearer {token}",
             )
-            # Si WeasyPrint está disponible, debe dar 404 (no es suyo)
-            assert response.status_code == 404
+            assert response.status_code == 200
+            assert response["Content-Type"] == "application/pdf"
         except OSError:
-            # WeasyPrint no disponible (falta libgobject en Windows)
-            # La verificación de ownership ocurre ANTES del import de WeasyPrint,
-            # así que si llega al import de WeasyPrint, significa que NO dio 404,
-            # lo cual indicaría un fallo de ownership. Pero get_object_or_404
-            # lanza 404 antes del import, así que no debería llegar aquí.
-            pytest.fail(
-                "El ownership check debió devolver 404 antes de importar WeasyPrint"
-            )
+            # WeasyPrint no disponible en Windows (falta libgobject)
+            pytest.skip("WeasyPrint no disponible en este entorno")
 
-    def test_no_puede_enviar_email_pdf_ajeno(self, client, usuario, usuario_b):
-        """Un usuario no puede enviar por email el PDF de un reporte ajeno."""
-        reporte = ComplianceExpediente.objects.create(
-            usuario_revisor=usuario_b, **COMPLIANCE_VALIDO
-        )
-        token, _ = obtener_tokens(client)  # Token de usuario A
+    def test_requiere_autenticacion(self, client):
+        """El endpoint requiere token JWT."""
         response = client.post(
-            f"/api/compliance/{reporte.id}/enviar-email",
-            HTTP_AUTHORIZATION=f"Bearer {token}",
+            "/api/compliance/pdf",
+            data=json.dumps(COMPLIANCE_VALIDO),
+            content_type="application/json",
         )
-        assert response.status_code == 404
+        assert response.status_code == 401
+
+
+class TestEnviarComplianceEmail:
+    """Tests para POST /api/compliance/enviar-email"""
+
+    @patch("contratos.routers.compliance.enviar_correo_con_pdf")
+    def test_enviar_email_exitoso(self, mock_enviar, client, usuario):
+        """Se puede generar y enviar un compliance por email."""
+        token, _ = obtener_tokens(client)
+        try:
+            response = client.post(
+                "/api/compliance/enviar-email",
+                data=json.dumps(COMPLIANCE_VALIDO),
+                content_type="application/json",
+                HTTP_AUTHORIZATION=f"Bearer {token}",
+            )
+            assert response.status_code == 200
+            assert "test@correo.com" in response.json()["message"]
+            mock_enviar.assert_called_once()
+        except OSError:
+            pytest.skip("WeasyPrint no disponible en este entorno")
+
+    def test_requiere_autenticacion(self, client):
+        """El endpoint requiere token JWT."""
+        response = client.post(
+            "/api/compliance/enviar-email",
+            data=json.dumps(COMPLIANCE_VALIDO),
+            content_type="application/json",
+        )
+        assert response.status_code == 401
