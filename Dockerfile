@@ -40,4 +40,6 @@ COPY . /app/
 RUN SECRET_KEY=temp-build-key DATABASE_URL=sqlite:///tmp.db python manage.py collectstatic --noinput
 
 # Comando de arranque para Render usando Gunicorn y auto-correr migraciones
-CMD sh -c "python manage.py migrate && gunicorn contrataciones.wsgi:application --bind 0.0.0.0:$PORT"
+# --timeout 180: WeasyPrint necesita más de 30s para PDFs grandes (manual=489KB/48 páginas)
+# --workers 1: Render Free tiene 512MB RAM, 1 worker evita OOM al generar PDFs
+CMD sh -c "python manage.py migrate && gunicorn contrataciones.wsgi:application --bind 0.0.0.0:$PORT --timeout 180 --workers 1"
