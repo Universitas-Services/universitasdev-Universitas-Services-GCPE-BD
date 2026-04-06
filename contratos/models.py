@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -6,6 +7,7 @@ from django.contrib.auth.models import User
 # 1. PERFIL DE USUARIO
 # ==============================================================================
 class PerfilUsuario(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="perfil")
     telefono = models.CharField(max_length=20, blank=True, null=True)
     cargo = models.CharField(max_length=150, verbose_name="Cargo del Usuario")
@@ -21,6 +23,7 @@ class PerfilUsuario(models.Model):
 # 2. CONFIGURACIÓN DEL MANUAL
 # ==============================================================================
 class ManualConfiguracion(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     nombre_institucion_ente = models.CharField(max_length=255)
     siglas_institucion_ente = models.CharField(max_length=50)
@@ -38,6 +41,7 @@ class ManualConfiguracion(models.Model):
 # 3. REGISTRO DE PROVEEDORES
 # ==============================================================================
 class Proveedor(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     creado_por = models.ForeignKey(User, on_delete=models.PROTECT)
     fecha_registro = models.DateField(auto_now_add=True)
 
@@ -101,6 +105,7 @@ OPCIONES_RESPUESTA = [
 
 
 class ComplianceExpediente(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     usuario_revisor = models.ForeignKey(User, on_delete=models.PROTECT)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
@@ -194,6 +199,7 @@ class ComplianceExpediente(models.Model):
 # 5. CÓDIGO OTP PARA RESET DE CONTRASEÑA
 # ==============================================================================
 class CodigoResetPassword(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     codigo = models.CharField(max_length=6)
     token_reset = models.CharField(max_length=64, blank=True, null=True)

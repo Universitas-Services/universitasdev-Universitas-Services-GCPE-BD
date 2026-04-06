@@ -1,4 +1,5 @@
 import math
+import uuid
 from ninja import Router
 from ninja_jwt.authentication import JWTAuth
 from django.db.models import Q
@@ -66,7 +67,7 @@ def listar_proveedores(request, q: str = None, page: int = 1, page_size: int = 1
 
 
 @router.delete("/proveedores/{id}", auth=JWTAuth())
-def eliminar_proveedor(request, id: int):
+def eliminar_proveedor(request, id: uuid.UUID):
     """
     Soft delete: marca el proveedor como inactivo.
     Solo el usuario que lo creó puede eliminarlo.
