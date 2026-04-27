@@ -2,7 +2,7 @@ from ninja import ModelSchema, Schema
 from pydantic import field_validator, EmailStr
 from datetime import date
 from decimal import Decimal, InvalidOperation
-from typing import List
+from typing import List, Optional
 import re
 from .models import Proveedor, ComplianceExpediente, ManualConfiguracion
 
@@ -140,6 +140,8 @@ class UserProfileSchema(Schema):
     telefono: str = None
     nombre_institucion_ente: str = None
     cargo: str = None
+    is_staff: bool = False
+    is_superuser: bool = False
 
     @staticmethod
     def resolve_telefono(obj):
@@ -239,3 +241,61 @@ class ResetPasswordConTokenSchema(Schema):
         if "new_password" in info.data and v != info.data["new_password"]:
             raise ValueError("Las contraseñas no coinciden")
         return v
+
+
+# --- SCHEMAS DE PANEL DE ADMINISTRADOR ---
+
+
+class UsuarioAdminOut(Schema):
+    id: int
+    first_name: str
+    last_name: str
+    email: str
+    telefono: Optional[str] = None
+    nombre_institucion_ente: Optional[str] = None
+    cargo: Optional[str] = None
+
+    @staticmethod
+    def resolve_telefono(obj):
+        perfil = getattr(obj, "perfil", None)
+        return perfil.telefono if perfil else None
+
+    @staticmethod
+    def resolve_nombre_institucion_ente(obj):
+        perfil = getattr(obj, "perfil", None)
+        return perfil.nombre_institucion_ente if perfil else None
+
+    @staticmethod
+    def resolve_cargo(obj):
+        perfil = getattr(obj, "perfil", None)
+        return perfil.cargo if perfil else None
+
+
+class UsuarioAdminPaginadoOut(Schema):
+    items: List[UsuarioAdminOut]
+    total: int
+    page: int
+    page_size: int
+    pages: int
+
+
+class CompliancePaginadoOut(Schema):
+    items: List[ComplianceOut]
+    total: int
+    page: int
+    page_size: int
+    pages: int
+
+
+class ManualOut(ModelSchema):
+    class Meta:
+        model = ManualConfiguracion
+        fields = "__all__"
+
+
+class ManualPaginadoOut(Schema):
+    items: List[ManualOut]
+    total: int
+    page: int
+    page_size: int
+    pages: int

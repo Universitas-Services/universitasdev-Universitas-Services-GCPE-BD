@@ -3,6 +3,7 @@ from ninja_jwt.authentication import JWTAuth
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
+from ..models import ManualConfiguracion
 from ..schemas import ManualSchema
 from ..email_service import enviar_correo_con_pdf
 
@@ -13,9 +14,13 @@ router = Router(tags=["📖 Manual de Normas"])
 def generar_manual_pdf(request, payload: ManualSchema):
     """
     Recibe los 4 datos de configuración y genera el Manual en PDF.
-    No guarda en BD, solo genera el documento al vuelo.
+    Guarda en BD y genera el documento.
     """
     from weasyprint import HTML
+
+    # Guardar en BD
+    manual = ManualConfiguracion(usuario=request.auth, **payload.dict())
+    manual.save()
 
     data_context = payload.dict()
 
@@ -38,8 +43,12 @@ def generar_manual_pdf(request, payload: ManualSchema):
 def enviar_manual_por_email(request, payload: ManualSchema):
     """
     Genera el Manual en PDF y lo envía por correo electrónico
-    al correo indicado por el usuario en el formulario.
+    al correo indicado por el usuario en el formulario. Guarda en BD.
     """
+    # Guardar en BD
+    manual = ManualConfiguracion(usuario=request.auth, **payload.dict())
+    manual.save()
+
     data_context = payload.dict()
 
     from weasyprint import HTML

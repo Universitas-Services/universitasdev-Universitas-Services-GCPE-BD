@@ -8,6 +8,7 @@ from .routers.perfil import router as perfil_router
 from .routers.proveedores import router as proveedores_router
 from .routers.compliance import router as compliance_router
 from .routers.manual import router as manual_router
+from .routers.admin import router as admin_router
 
 # Inicializamos la API
 api = NinjaExtraAPI(title="Sistema de Contrataciones")
@@ -75,3 +76,4 @@ api.add_router("", perfil_router)
 api.add_router("", proveedores_router)
 api.add_router("", compliance_router)
 api.add_router("", manual_router)
+api.add_router("", admin_router)

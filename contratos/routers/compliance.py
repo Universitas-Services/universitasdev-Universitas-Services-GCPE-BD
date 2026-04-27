@@ -15,12 +15,13 @@ router = Router(tags=["📋 Compliance"])
 def generar_compliance_pdf(request, payload: ComplianceSchema):
     """
     Recibe los datos del formulario de compliance y genera el PDF.
-    No guarda en BD, solo genera el documento al vuelo.
+    Guarda en BD y genera el documento.
     """
     from weasyprint import HTML
 
-    # Crear objeto en memoria (sin guardar en BD) para reutilizar generar_data_para_pdf
-    reporte = ComplianceExpediente(**payload.dict())
+    # Guardar en BD
+    reporte = ComplianceExpediente(usuario_revisor=request.auth, **payload.dict())
+    reporte.save()
 
     data_context = generar_data_para_pdf(reporte)
     html_string = render_to_string("reportes/hallazgos.html", data_context)
@@ -39,12 +40,13 @@ def generar_compliance_pdf(request, payload: ComplianceSchema):
 def enviar_compliance_por_email(request, payload: ComplianceSchema):
     """
     Genera el PDF del reporte de compliance y lo envía por correo
-    al email indicado en persona_contacto.
+    al email indicado en persona_contacto. Guarda en BD.
     """
     from weasyprint import HTML
 
-    # Crear objeto en memoria (sin guardar en BD)
-    reporte = ComplianceExpediente(**payload.dict())
+    # Guardar en BD
+    reporte = ComplianceExpediente(usuario_revisor=request.auth, **payload.dict())
+    reporte.save()
 
     data_context = generar_data_para_pdf(reporte)
     html_string = render_to_string("reportes/hallazgos.html", data_context)
