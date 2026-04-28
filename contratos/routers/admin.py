@@ -11,12 +11,15 @@ from ninja import Router, Schema
 from ninja_jwt.authentication import JWTAuth
 from ninja.errors import HttpError
 from django.contrib.auth.models import User
-from ..models import Proveedor, ComplianceExpediente, ManualConfiguracion
+from ..models import Proveedor, ComplianceExpediente, ManualConfiguracion, NotaCRM
 from ..schemas import (
     UsuarioAdminPaginadoOut,
     ProveedorPaginadoOut,
     CompliancePaginadoOut,
     ManualPaginadoOut,
+    NotaCRMIn,
+    NotaCRMOut,
+    NotaCRMPaginadaOut,
 )
 from ..services import generar_data_para_pdf
 from ..email_service import enviar_correo_con_pdf
@@ -350,3 +353,117 @@ def reenviar_manual(request, manual_id: uuid.UUID):
     return {
         "message": f"El manual ha sido reenviado a {manual.correo_electronico_manual}"
     }
+
+
+# --- CRUD NOTAS CRM ---
+
+
+@router.get("/notas", response=NotaCRMPaginadaOut, auth=JWTAuth())
+def listar_todas_las_notas(request, q: str = None, page: int = 1, page_size: int = 10):
+    """
+    Lista TODAS las notas del sistema (útil para una vista global de CRM).
+    """
+    user = request.auth
+    if not user.is_staff and not user.is_superuser:
+        raise HttpError(403, "No tienes permisos de administrador")
+
+    queryset = NotaCRM.objects.select_related("autor", "usuario_objetivo").all()
+    if q:
+        queryset = queryset.filter(
+            Q(contenido__icontains=q)
+            | Q(etiqueta__icontains=q)
+            | Q(usuario_objetivo__username__icontains=q)
+        )
+
+    total = queryset.count()
+    page_size = max(1, min(page_size, 100))
+    pages = math.ceil(total / page_size) if total > 0 else 1
+    page = max(1, min(page, pages))
+    offset = (page - 1) * page_size
+    items = list(queryset[offset : offset + page_size])
+
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "pages": pages,
+    }
+
+
+@router.post("/usuarios/{user_id}/notas", response=NotaCRMOut, auth=JWTAuth())
+def crear_nota(request, user_id: int, payload: NotaCRMIn):
+    """
+    Crea una nueva nota para un usuario específico.
+    """
+    user = request.auth
+    if not user.is_staff and not user.is_superuser:
+        raise HttpError(403, "No tienes permisos de administrador")
+
+    usuario_objetivo = get_object_or_404(User, id=user_id)
+    nota = NotaCRM.objects.create(
+        usuario_objetivo=usuario_objetivo,
+        autor=user,
+        contenido=payload.contenido,
+        etiqueta=payload.etiqueta,
+    )
+    return nota
+
+
+@router.get("/usuarios/{user_id}/notas", response=NotaCRMPaginadaOut, auth=JWTAuth())
+def listar_notas_usuario(request, user_id: int, page: int = 1, page_size: int = 10):
+    """
+    Lista las notas asociadas a un usuario específico.
+    """
+    user = request.auth
+    if not user.is_staff and not user.is_superuser:
+        raise HttpError(403, "No tienes permisos de administrador")
+
+    queryset = NotaCRM.objects.select_related("autor", "usuario_objetivo").filter(
+        usuario_objetivo_id=user_id
+    )
+
+    total = queryset.count()
+    page_size = max(1, min(page_size, 100))
+    pages = math.ceil(total / page_size) if total > 0 else 1
+    page = max(1, min(page, pages))
+    offset = (page - 1) * page_size
+    items = list(queryset[offset : offset + page_size])
+
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "pages": pages,
+    }
+
+
+@router.put("/notas/{nota_id}", response=NotaCRMOut, auth=JWTAuth())
+def actualizar_nota(request, nota_id: uuid.UUID, payload: NotaCRMIn):
+    """
+    Actualiza el contenido o la etiqueta de una nota existente.
+    """
+    user = request.auth
+    if not user.is_staff and not user.is_superuser:
+        raise HttpError(403, "No tienes permisos de administrador")
+
+    nota = get_object_or_404(NotaCRM, id=nota_id)
+    nota.contenido = payload.contenido
+    nota.etiqueta = payload.etiqueta
+    nota.save()
+    return nota
+
+
+@router.delete("/notas/{nota_id}", auth=JWTAuth())
+def eliminar_nota(request, nota_id: uuid.UUID):
+    """
+    Elimina una nota existente.
+    """
+    user = request.auth
+    if not user.is_staff and not user.is_superuser:
+        raise HttpError(403, "No tienes permisos de administrador")
+
+    nota = get_object_or_404(NotaCRM, id=nota_id)
+    nota.delete()
+    return {"message": "Nota eliminada correctamente"}

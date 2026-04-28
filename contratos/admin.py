@@ -7,6 +7,7 @@ from .models import (
     Proveedor,
     ComplianceExpediente,
     CodigoResetPassword,
+    NotaCRM,
 )
 
 
@@ -59,3 +60,16 @@ class CodigoResetPasswordAdmin(admin.ModelAdmin):
     list_display = ("user", "codigo", "creado_en", "usado")
     search_fields = ("user__email", "codigo")
     list_filter = ("usado", "creado_en")
+
+
+# 6. Configuración para Notas CRM
+@admin.register(NotaCRM)
+class NotaCRMAdmin(admin.ModelAdmin):
+    list_display = ("usuario_objetivo", "autor", "etiqueta", "fecha_creacion")
+    search_fields = (
+        "usuario_objetivo__username",
+        "usuario_objetivo__email",
+        "autor__username",
+        "contenido",
+    )
+    list_filter = ("etiqueta", "fecha_creacion")

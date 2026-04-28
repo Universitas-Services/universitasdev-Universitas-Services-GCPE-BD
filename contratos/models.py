@@ -211,3 +211,34 @@ class CodigoResetPassword(models.Model):
 
     def __str__(self):
         return f"OTP {self.codigo} - {self.user.email}"
+
+
+# ==============================================================================
+# 6. NOTAS INTERNAS CRM
+# ==============================================================================
+class NotaCRM(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    usuario_objetivo = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="notas_crm_recibidas"
+    )
+    autor = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="notas_crm_creadas"
+    )
+    contenido = models.TextField()
+
+    ETIQUETAS_CHOICES = [
+        ("POR_CONTACTAR", "Por contactar"),
+        ("CONTACTADO", "Contactado"),
+    ]
+    etiqueta = models.CharField(
+        max_length=20, choices=ETIQUETAS_CHOICES, default="POR_CONTACTAR"
+    )
+
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-fecha_creacion"]
+
+    def __str__(self):
+        return f"Nota para {self.usuario_objetivo.username} - {self.etiqueta}"

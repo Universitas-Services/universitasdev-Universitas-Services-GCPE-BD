@@ -4,7 +4,7 @@ from datetime import date
 from decimal import Decimal, InvalidOperation
 from typing import List, Optional
 import re
-from .models import Proveedor, ComplianceExpediente, ManualConfiguracion
+from .models import Proveedor, ComplianceExpediente, ManualConfiguracion, NotaCRM
 
 
 class ProveedorSchema(ModelSchema):
@@ -295,6 +295,37 @@ class ManualOut(ModelSchema):
 
 class ManualPaginadoOut(Schema):
     items: List[ManualOut]
+    total: int
+    page: int
+    page_size: int
+    pages: int
+
+
+# --- SCHEMAS DE NOTAS CRM ---
+
+
+class NotaCRMIn(Schema):
+    contenido: str
+    etiqueta: str
+
+
+class NotaCRMOut(ModelSchema):
+    autor_nombre: str = None
+
+    class Meta:
+        model = NotaCRM
+        fields = "__all__"
+
+    @staticmethod
+    def resolve_autor_nombre(obj):
+        return (
+            f"{obj.autor.first_name} {obj.autor.last_name}".strip()
+            or obj.autor.username
+        )
+
+
+class NotaCRMPaginadaOut(Schema):
+    items: List[NotaCRMOut]
     total: int
     page: int
     page_size: int
