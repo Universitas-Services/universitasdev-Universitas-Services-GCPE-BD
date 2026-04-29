@@ -7,6 +7,7 @@ from django.db.models.functions import TruncMonth
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
+from django.http import HttpResponse
 from ninja import Router, Schema
 from ninja_jwt.authentication import JWTAuth
 from ninja.errors import HttpError
@@ -293,6 +294,35 @@ def reenviar_compliance(request, compliance_id: uuid.UUID):
     return {"message": f"El reporte ha sido reenviado a {reporte.persona_contacto}"}
 
 
+@router.get("/usuarios/{user_id}/compliance/{compliance_id}/descargar", auth=JWTAuth())
+def descargar_compliance(request, user_id: int, compliance_id: uuid.UUID):
+    """
+    Genera y descarga el reporte de compliance en formato PDF para un usuario específico.
+    """
+    user = request.auth
+    if not user.is_staff and not user.is_superuser:
+        raise HttpError(403, "No tienes permisos de administrador")
+
+    reporte = get_object_or_404(
+        ComplianceExpediente, id=compliance_id, usuario_revisor_id=user_id
+    )
+
+    from weasyprint import HTML
+
+    data_context = generar_data_para_pdf(reporte)
+    html_string = render_to_string("reportes/hallazgos.html", data_context)
+    pdf_bytes = HTML(string=html_string).write_pdf()
+
+    nombre_archivo = f"Reporte_Hallazgos_{reporte.nomenclatura}.pdf"
+
+    response = HttpResponse(pdf_bytes, content_type="application/pdf")
+    response[
+        "Content-Disposition"
+    ] = f'attachment; filename="{nombre_archivo}"'  # noqa: E702
+
+    return response
+
+
 @router.get("/usuarios/{user_id}/manuales", response=ManualPaginadoOut, auth=JWTAuth())
 def listar_manuales_usuario(
     request, user_id: int, q: str = None, page: int = 1, page_size: int = 10
@@ -367,6 +397,42 @@ def reenviar_manual(request, manual_id: uuid.UUID):
     return {
         "message": f"El manual ha sido reenviado a {manual.correo_electronico_manual}"
     }
+
+
+@router.get("/usuarios/{user_id}/manuales/{manual_id}/descargar", auth=JWTAuth())
+def descargar_manual(request, user_id: int, manual_id: uuid.UUID):
+    """
+    Genera y descarga el manual de normas en formato PDF para un usuario específico.
+    """
+    user = request.auth
+    if not user.is_staff and not user.is_superuser:
+        raise HttpError(403, "No tienes permisos de administrador")
+
+    manual = get_object_or_404(ManualConfiguracion, id=manual_id, usuario_id=user_id)
+
+    data_context = {
+        "nombre_institucion_ente": manual.nombre_institucion_ente,
+        "siglas_institucion_ente": manual.siglas_institucion_ente,
+        "nombre_unidad_admin_financiera": manual.nombre_unidad_admin_financiera,
+        "nombre_unidad_sistemas_tecnologia": manual.nombre_unidad_sistemas_tecnologia,
+        "correo_electronico_manual": manual.correo_electronico_manual,
+    }
+
+    from weasyprint import HTML
+
+    html_string = render_to_string(
+        "reportes/manual_concurso_abierto.html", data_context
+    )
+    pdf_bytes = HTML(string=html_string).write_pdf()
+
+    nombre_archivo = f"Manual_Normas_{manual.siglas_institucion_ente}.pdf"
+
+    response = HttpResponse(pdf_bytes, content_type="application/pdf")
+    response[
+        "Content-Disposition"
+    ] = f'attachment; filename="{nombre_archivo}"'  # noqa: E702
+
+    return response
 
 
 # --- CRUD NOTAS CRM ---
