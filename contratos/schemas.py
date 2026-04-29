@@ -308,6 +308,15 @@ class NotaCRMIn(Schema):
     contenido: str
     etiqueta: str
 
+    @field_validator("etiqueta")
+    def validar_etiqueta(cls, v):
+        opciones_validas = ["POR_CONTACTAR", "CONTACTADO"]
+        if v not in opciones_validas:
+            raise ValueError(
+                f"Etiqueta inválida. Solo se permite: {', '.join(opciones_validas)}"
+            )
+        return v
+
 
 class NotaCRMOut(ModelSchema):
     autor_nombre: str = None
