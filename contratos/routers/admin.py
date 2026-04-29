@@ -13,6 +13,7 @@ from ninja.errors import HttpError
 from django.contrib.auth.models import User
 from ..models import Proveedor, ComplianceExpediente, ManualConfiguracion, NotaCRM
 from ..schemas import (
+    UsuarioAdminOut,
     UsuarioAdminPaginadoOut,
     ProveedorPaginadoOut,
     CompliancePaginadoOut,
@@ -174,6 +175,19 @@ def listar_usuarios(request, q: str = None, page: int = 1, page_size: int = 10):
         "page_size": page_size,
         "pages": pages,
     }
+
+
+@router.get("/usuarios/{user_id}", response=UsuarioAdminOut, auth=JWTAuth())
+def obtener_detalle_usuario(request, user_id: int):
+    """
+    Obtiene los detalles básicos de un usuario en específico.
+    """
+    user = request.auth
+    if not user.is_staff and not user.is_superuser:
+        raise HttpError(403, "No tienes permisos de administrador")
+
+    usuario_objetivo = get_object_or_404(User, id=user_id)
+    return usuario_objetivo
 
 
 @router.get(
