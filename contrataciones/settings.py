@@ -181,3 +181,14 @@ EMAIL_HOST_PASSWORD = env(
     "RESEND_API_KEY", default="dummy-key-para-tests"
 )  # Lee la key del .env
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="onboarding@resend.dev")
+
+# --- CONFIGURACIÓN DE SEGURIDAD (CLOUD RUN) ---
+# Le dice a Django que confíe en el proxy HTTPS de Google Cloud Run
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# Permite validación CSRF desde el dominio oficial
+CSRF_TRUSTED_ORIGINS = [
+    env(
+        "BACKEND_URL",
+        default="https://backend-contrataciones-693924722323.us-central1.run.app",
+    )
+]
