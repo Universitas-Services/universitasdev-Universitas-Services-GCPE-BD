@@ -1,5 +1,6 @@
 from ninja_extra import NinjaExtraAPI
 from ninja_jwt.controller import NinjaJWTDefaultController
+from ninja_jwt.exceptions import AuthenticationFailed
 from ninja.errors import ValidationError
 from django.http import JsonResponse
 
@@ -65,6 +66,15 @@ def errores_validacion_en_espanol(request, exc):
         errores.append({"campo": str(campo), "mensaje": mensaje})
 
     return JsonResponse({"errores": errores}, status=422)
+
+
+@api.exception_handler(AuthenticationFailed)
+def auth_failed_handler(request, exc):
+    """
+    Intercepta los errores de login (credenciales incorrectas o cuenta inactiva)
+    y devuelve un mensaje amigable en español.
+    """
+    return JsonResponse({"detail": "Credenciales invalidas."}, status=401)
 
 
 # JWT Login/Refresh (auto-registrado por NinjaJWT)

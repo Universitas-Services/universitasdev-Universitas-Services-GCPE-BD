@@ -57,9 +57,12 @@ def enviar_correo_activacion(user):
 
     resend.Emails.send(
         {
-            "from": _get_from_email(),
+            "from": f"Universitas <{_get_from_email()}>",
             "to": [user.email],
-            "subject": "Activa tu cuenta - Universitas",
+            "subject": (
+                "Activa tu cuenta - Sistema Integrado de Selección "
+                "de Contratista express"
+            ),
             "html": html_content,
         }
     )
@@ -82,7 +85,7 @@ def enviar_correo_codigo_reset(user, codigo):
 
     resend.Emails.send(
         {
-            "from": _get_from_email(),
+            "from": f"Universitas <{_get_from_email()}>",
             "to": [user.email],
             "subject": "Código de verificación - Universitas",
             "html": html_content,
@@ -116,7 +119,7 @@ def enviar_correo_con_pdf(
 
     resend.Emails.send(
         {
-            "from": _get_from_email(),
+            "from": f"Universitas <{_get_from_email()}>",
             "to": [email_destino],
             "subject": asunto,
             "html": html_content,

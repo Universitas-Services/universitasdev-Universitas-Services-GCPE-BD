@@ -191,6 +191,26 @@ def obtener_detalle_usuario(request, user_id: int):
     return usuario_objetivo
 
 
+@router.delete("/usuarios/{user_id}", auth=JWTAuth())
+def eliminar_usuario_pasivamente(request, user_id: int):
+    """
+    Realiza una eliminación pasiva (soft delete) del usuario,
+    cambiando su estado is_active a False para que no pueda loguearse.
+    """
+    user = request.auth
+    if not user.is_staff and not user.is_superuser:
+        raise HttpError(403, "No tienes permisos de administrador")
+
+    if user.id == user_id:
+        raise HttpError(400, "No puedes eliminar tu propia cuenta")
+
+    usuario_objetivo = get_object_or_404(User, id=user_id)
+    usuario_objetivo.is_active = False
+    usuario_objetivo.save()
+
+    return {"message": f"Usuario {usuario_objetivo.email} desactivado correctamente"}
+
+
 @router.get(
     "/usuarios/{user_id}/proveedores", response=ProveedorPaginadoOut, auth=JWTAuth()
 )
@@ -383,11 +403,11 @@ def reenviar_manual(request, manual_id: uuid.UUID):
     )
     pdf_bytes = HTML(string=html_string).write_pdf()
 
-    nombre_archivo = f"Manual_Normas_{manual.siglas_institucion_ente}.pdf"
+    nombre_archivo = f"Manual_de_Contrataciones_{manual.siglas_institucion_ente}.pdf"
 
     enviar_correo_con_pdf(
         user=user,
-        asunto=f"Manual de Normas - {manual.siglas_institucion_ente}",
+        asunto=f"Manual de Contrataciones Públicas - {manual.siglas_institucion_ente}",
         mensaje_tipo="Manual de Normas de Contrataciones",
         pdf_bytes=pdf_bytes,
         nombre_archivo=nombre_archivo,
@@ -425,7 +445,7 @@ def descargar_manual(request, user_id: int, manual_id: uuid.UUID):
     )
     pdf_bytes = HTML(string=html_string).write_pdf()
 
-    nombre_archivo = f"Manual_Normas_{manual.siglas_institucion_ente}.pdf"
+    nombre_archivo = f"Manual_de_Contrataciones_{manual.siglas_institucion_ente}.pdf"
 
     response = HttpResponse(pdf_bytes, content_type="application/pdf")
     response[

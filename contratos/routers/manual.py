@@ -31,7 +31,7 @@ def generar_manual_pdf(request, payload: ManualSchema):
     pdf_file = HTML(string=html_string).write_pdf()
 
     response = HttpResponse(pdf_file, content_type="application/pdf")
-    nombre_archivo = f"Manual_Normas_{payload.siglas_institucion_ente}.pdf"
+    nombre_archivo = f"Manual_de_Contrataciones_{payload.siglas_institucion_ente}.pdf"
     response[
         "Content-Disposition"
     ] = f'attachment; filename="{nombre_archivo}"'  # noqa: E702
@@ -58,11 +58,11 @@ def enviar_manual_por_email(request, payload: ManualSchema):
     )
     pdf_bytes = HTML(string=html_string).write_pdf()
 
-    nombre_archivo = f"Manual_Normas_{payload.siglas_institucion_ente}.pdf"
+    nombre_archivo = f"Manual_de_Contrataciones_{payload.siglas_institucion_ente}.pdf"
 
     enviar_correo_con_pdf(
         user=request.auth,
-        asunto=f"Manual de Normas - {payload.siglas_institucion_ente}",
+        asunto=f"Manual de Contrataciones Públicas - {payload.siglas_institucion_ente}",
         mensaje_tipo="Manual de Normas de Contrataciones",
         pdf_bytes=pdf_bytes,
         nombre_archivo=nombre_archivo,
