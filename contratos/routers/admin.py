@@ -146,15 +146,21 @@ def get_dashboard_data(request):
 
 
 @router.get("/usuarios", response=UsuarioAdminPaginadoOut, auth=JWTAuth())
-def listar_usuarios(request, q: str = None, page: int = 1, page_size: int = 10):
+def listar_usuarios(
+    request, q: str = None, is_active: bool = None, page: int = 1, page_size: int = 10
+):
     """
-    Lista usuarios con paginación y búsqueda por nombre o email.
+    Lista usuarios con paginación, búsqueda por nombre o email, y filtro por estado.
     """
     user = request.auth
     if not user.is_staff and not user.is_superuser:
         raise HttpError(403, "No tienes permisos de administrador")
 
     queryset = User.objects.all()
+
+    if is_active is not None:
+        queryset = queryset.filter(is_active=is_active)
+
     if q:
         queryset = queryset.filter(
             Q(first_name__icontains=q)

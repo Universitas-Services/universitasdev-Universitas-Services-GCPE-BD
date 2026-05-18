@@ -251,6 +251,7 @@ class UsuarioAdminOut(Schema):
     first_name: str
     last_name: str
     email: str
+    is_active: bool
     telefono: Optional[str] = None
     nombre_institucion_ente: Optional[str] = None
     cargo: Optional[str] = None
