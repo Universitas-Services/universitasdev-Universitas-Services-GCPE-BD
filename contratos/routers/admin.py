@@ -211,6 +211,29 @@ def eliminar_usuario_pasivamente(request, user_id: int):
     return {"message": f"Usuario {usuario_objetivo.email} desactivado correctamente"}
 
 
+@router.put("/usuarios/{user_id}/activar", auth=JWTAuth())
+def activar_usuario_pasivamente(request, user_id: int):
+    """
+    Restaura el acceso de un usuario que fue desactivado pasivamente,
+    cambiando su estado is_active de vuelta a True.
+    """
+    user = request.auth
+    if not user.is_staff and not user.is_superuser:
+        raise HttpError(403, "No tienes permisos de administrador")
+
+    usuario_objetivo = get_object_or_404(User, id=user_id)
+
+    if usuario_objetivo.is_active:
+        return {
+            "message": f"El usuario {usuario_objetivo.email} ya se encuentra activo"
+        }
+
+    usuario_objetivo.is_active = True
+    usuario_objetivo.save()
+
+    return {"message": f"Usuario {usuario_objetivo.email} reactivado correctamente"}
+
+
 @router.get(
     "/usuarios/{user_id}/proveedores", response=ProveedorPaginadoOut, auth=JWTAuth()
 )
